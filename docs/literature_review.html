@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hawkeye - Literature Review & Differentiation Analysis</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    background: #fff;
+    color: #1a1a1a;
+    line-height: 1.7;
+    padding: 48px 64px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 30px; font-weight: 700; color: #111; margin-bottom: 4px; }
+  .subtitle { font-size: 15px; color: #666; margin-bottom: 12px; }
+  .authors { font-size: 13px; color: #888; margin-bottom: 36px; padding-bottom: 16px; border-bottom: 2px solid #111; }
+  h2 { font-size: 21px; font-weight: 700; margin: 44px 0 16px 0; color: #111; padding-bottom: 6px; border-bottom: 2px solid #e0e0e0; }
+  h3 { font-size: 16px; font-weight: 600; margin: 28px 0 12px 0; color: #222; }
+  h4 { font-size: 14px; font-weight: 600; margin: 20px 0 8px 0; color: #333; }
+  p { font-size: 14px; color: #333; margin: 8px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 20px 0; font-size: 13px; }
+  thead th { background: #f5f5f5; border: 1px solid #ddd; padding: 10px 12px; text-align: left; font-weight: 600; color: #333; }
+  tbody td { border: 1px solid #ddd; padding: 9px 12px; vertical-align: top; }
+  tbody tr:hover { background: #fafafa; }
+  .section { margin-bottom: 48px; page-break-inside: avoid; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin: 2px 3px; }
+  .tag-green { background: #e8f5e9; color: #2e7d32; }
+  .tag-red { background: #ffebee; color: #c62828; }
+  .tag-blue { background: #e3f2fd; color: #1565c0; }
+  .tag-orange { background: #fff3e0; color: #e65100; }
+  .tag-purple { background: #f3e5f5; color: #7b1fa2; }
+  .tag-gray { background: #f5f5f5; color: #616161; }
+  .highlight-box {
+    background: #f8f9fa; border-left: 4px solid #1976d2; padding: 16px 20px;
+    margin: 16px 0; border-radius: 0 6px 6px 0;
+  }
+  .gap-box {
+    background: #fff8e1; border-left: 4px solid #f9a825; padding: 16px 20px;
+    margin: 16px 0; border-radius: 0 6px 6px 0;
+  }
+  .novelty-box {
+    background: #e8f5e9; border-left: 4px solid #43a047; padding: 16px 20px;
+    margin: 16px 0; border-radius: 0 6px 6px 0;
+  }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .card {
+    border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px;
+    background: #fafafa;
+  }
+  .card h4 { margin-top: 0; }
+  .count-badge {
+    display: inline-block; background: #1976d2; color: white;
+    padding: 3px 12px; border-radius: 16px; font-size: 13px; font-weight: 600;
+  }
+  .novelty-meter {
+    display: flex; align-items: center; gap: 8px; margin: 8px 0;
+  }
+  .meter-bar {
+    flex: 1; height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden;
+  }
+  .meter-fill {
+    height: 100%; border-radius: 4px;
+  }
+  .meter-high { background: linear-gradient(90deg, #43a047, #66bb6a); }
+  .meter-medium { background: linear-gradient(90deg, #f9a825, #fdd835); }
+  .meter-low { background: linear-gradient(90deg, #ef5350, #e57373); }
+  ul { margin: 8px 0 8px 24px; font-size: 14px; }
+  li { margin: 4px 0; }
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+  .summary-card {
+    text-align: center; padding: 20px 12px; border-radius: 8px;
+    border: 1px solid #e0e0e0;
+  }
+  .summary-card .number { font-size: 28px; font-weight: 700; }
+  .summary-card .label { font-size: 12px; color: #666; margin-top: 4px; }
+  .timeline-item {
+    display: flex; gap: 16px; margin: 12px 0; padding: 12px 16px;
+    border-left: 3px solid #1976d2; background: #fafafa; border-radius: 0 6px 6px 0;
+  }
+  .timeline-date { font-weight: 600; min-width: 100px; color: #1976d2; font-size: 13px; }
+  .timeline-content { font-size: 13px; }
+  .versus { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+  .versus-item { flex: 1; padding: 12px; border-radius: 6px; font-size: 13px; }
+  .versus-vs { font-weight: 700; color: #999; font-size: 14px; }
+  @media print {
+    body { padding: 24px; }
+    .section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Literature Review & Differentiation Analysis</h1>
+<p class="subtitle">AI-based Parkinson's Disease Motor Assessment: 4 Representation Approaches</p>
+<p class="authors">Hawkeye Research Team | Last Updated: 2026-02-09</p>
+
+<!-- Overview Summary -->
+<div class="summary-grid">
+  <div class="summary-card" style="border-color: #1976d2;">
+    <div class="number" style="color: #1976d2;">25+</div>
+    <div class="label">Skeleton Papers</div>
+  </div>
+  <div class="summary-card" style="border-color: #7b1fa2;">
+    <div class="number" style="color: #7b1fa2;">~5</div>
+    <div class="label">SMPL Papers</div>
+  </div>
+  <div class="summary-card" style="border-color: #e65100;">
+    <div class="number" style="color: #e65100;">20+</div>
+    <div class="label">RGB Papers</div>
+  </div>
+  <div class="summary-card" style="border-color: #43a047;">
+    <div class="number" style="color: #43a047;">0</div>
+    <div class="label">VLM Papers</div>
+  </div>
+</div>
+
+<!-- Section 1: Skeleton -->
+<div class="section">
+<h2>1. Skeleton-Based Approaches (2D/3D Skeleton)</h2>
+
+<div class="highlight-box">
+  <strong>Research Volume:</strong> Most saturated area with 25+ papers. Most use single-dataset, single-task evaluation.
+  <br><strong>Dominant Methods:</strong> MediaPipe/OpenPose 2D extraction, ST-GCN/GCN for action modeling, LSTM/Transformer for temporal.
+  <br><strong>Trend:</strong> 2D skeleton &rarr; 3D skeleton lifting (MotionBERT, VideoPose3D) for view-invariant features.
+</div>
+
+<h3>1.1 Key Papers</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Paper</th>
+      <th>Year</th>
+      <th>Method</th>
+      <th>Task</th>
+      <th>Dataset</th>
+      <th>Result</th>
+      <th>Cross-Dataset?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Lu et al. (IEEE TNSRE)</td>
+      <td>2021</td>
+      <td>OpenPose + LSTM</td>
+      <td>Gait</td>
+      <td>Private (30 PD)</td>
+      <td>r=0.82</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td>Liu et al. (Sensors)</td>
+      <td>2022</td>
+      <td>MediaPipe + RF/XGBoost</td>
+      <td>Finger Tapping</td>
+      <td>Private (25 PD)</td>
+      <td>Acc 78%</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td>Sabo et al. (npj Digital Med)</td>
+      <td>2022</td>
+      <td>OpenPose + Kinematic Features</td>
+      <td>Gait</td>
+      <td>Private (48 PD)</td>
+      <td>MAE 0.5</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td>Morinan et al. (Movement Disorders)</td>
+      <td>2023</td>
+      <td>MediaPipe + CNN</td>
+      <td>Finger Tapping, Hand, Leg</td>
+      <td>Private (310 PD)</td>
+      <td>AUC 0.87</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td>Rupprechter et al.</td>
+      <td>2023</td>
+      <td>Pose + Temporal CNN</td>
+      <td>Gait</td>
+      <td>Private (40 PD)</td>
+      <td>r=0.79</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td>PD4T (Park et al.)</td>
+      <td>2024</td>
+      <td>3D CNN + Skeleton</td>
+      <td>4 Tasks</td>
+      <td>PD4T (50 PD)</td>
+      <td>Benchmark</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td>Li et al. (IEEE JBHI)</td>
+      <td>2024</td>
+      <td>ST-GCN + Ordinal</td>
+      <td>Finger Tapping</td>
+      <td>Private (60 PD)</td>
+      <td>r=0.74</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td><strong>CARE-PD (NeurIPS)</strong></td>
+      <td><strong>2025</strong></td>
+      <td><strong>SMPL + 3D features</strong></td>
+      <td><strong>Gait only</strong></td>
+      <td><strong>3 datasets (cross)</strong></td>
+      <td><strong>r=0.78</strong></td>
+      <td><span class="tag tag-green"><strong>Yes (Gait only)</strong></span></td>
+    </tr>
+    <tr>
+      <td>Hawkeye (Ours)</td>
+      <td>2025</td>
+      <td>CORAL Ordinal + Mamba</td>
+      <td>4 Tasks</td>
+      <td>PD4T</td>
+      <td>r=0.55-0.81</td>
+      <td><span class="tag tag-orange">Planned</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>1.2 Gap Analysis</h3>
+<div class="gap-box">
+  <strong>Critical Gap: Cross-dataset evaluation for non-gait tasks = 0 papers</strong>
+  <ul>
+    <li>CARE-PD is the <strong>only</strong> cross-dataset work, but limited to <strong>Gait only</strong></li>
+    <li>Finger Tapping, Hand Movement, Leg Agility: <strong>no cross-dataset study exists</strong></li>
+    <li>All 25+ papers use single-dataset, single-institution evaluation</li>
+    <li>No domain adaptation or transfer learning across PD motor assessment datasets</li>
+  </ul>
+</div>
+
+<h3>1.3 2D vs 3D Trend</h3>
+<div class="card-grid">
+  <div class="card">
+    <h4>2D Skeleton (Declining)</h4>
+    <ul>
+      <li>MediaPipe, OpenPose, AlphaPose</li>
+      <li>View-dependent (camera angle affects features)</li>
+      <li>Easy to extract, widely available</li>
+      <li>Limited cross-dataset potential due to view variance</li>
+    </ul>
+    <span class="tag tag-red">Trend: Declining</span>
+  </div>
+  <div class="card">
+    <h4>3D Skeleton (Rising)</h4>
+    <ul>
+      <li>MotionBERT, VideoPose3D, D3DP</li>
+      <li>View-invariant 3D joint positions</li>
+      <li>Monocular RGB input (no depth camera needed)</li>
+      <li>Ideal for cross-dataset generalization</li>
+    </ul>
+    <span class="tag tag-green">Trend: Rising</span>
+  </div>
+</div>
+</div>
+
+<!-- Section 2: SMPL -->
+<div class="section">
+<h2>2. SMPL-Based Approaches (3D Body Mesh)</h2>
+
+<div class="highlight-box">
+  <strong>Research Volume:</strong> Emerging area, ~5 papers for PD motor assessment.
+  <br><strong>Key Advantage:</strong> Full body mesh provides surface normals, body shape, and 3D joint positions.
+  <br><strong>Key Issue:</strong> SMPL mesh/surface info is <strong>unnecessary</strong> for UPDRS scoring; 3D skeleton joints alone are sufficient.
+  <br><strong>Extraction:</strong> HMR2.0, 4DHumans from monocular RGB (no depth camera required).
+</div>
+
+<h3>2.1 Key Papers</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Paper</th>
+      <th>Year</th>
+      <th>Method</th>
+      <th>Task</th>
+      <th>Key Contribution</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>CARE-PD (NeurIPS)</strong></td>
+      <td>2025</td>
+      <td>SMPL via 4DHumans</td>
+      <td>Gait</td>
+      <td>First cross-dataset with 3D body; uses SMPL joints (not mesh)</td>
+    </tr>
+    <tr>
+      <td>Mehdizadeh et al.</td>
+      <td>2024</td>
+      <td>SMPL + Biomechanics</td>
+      <td>Gait</td>
+      <td>Joint angles from SMPL for clinical gait analysis</td>
+    </tr>
+    <tr>
+      <td>Pang et al.</td>
+      <td>2024</td>
+      <td>HMR2.0 + SMPL</td>
+      <td>Full body</td>
+      <td>SMPL for general movement disorder quantification</td>
+    </tr>
+    <tr>
+      <td>Shin et al.</td>
+      <td>2023</td>
+      <td>SMPL-X</td>
+      <td>Hand</td>
+      <td>Hand mesh for fine motor assessment (non-PD)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>2.2 SMPL vs 3D Skeleton for UPDRS</h3>
+<div class="card-grid">
+  <div class="card">
+    <h4>SMPL (Overkill for UPDRS)</h4>
+    <ul>
+      <li>6890 mesh vertices + 24 joints</li>
+      <li>Provides body shape (beta), pose (theta)</li>
+      <li>Surface normals, body volume</li>
+      <li>Computationally expensive</li>
+      <li>Mesh/surface info not clinically relevant for UPDRS</li>
+    </ul>
+    <span class="tag tag-orange">Unnecessary complexity</span>
+  </div>
+  <div class="card">
+    <h4>3D Skeleton Lifting (Sweet Spot)</h4>
+    <ul>
+      <li>17-33 3D joint positions</li>
+      <li>MotionBERT: state-of-the-art accuracy</li>
+      <li>View-invariant 3D coordinates</li>
+      <li>Lightweight, fast inference</li>
+      <li>Sufficient for all UPDRS tasks</li>
+    </ul>
+    <span class="tag tag-green">Recommended</span>
+  </div>
+</div>
+</div>
+
+<!-- Section 3: RGB -->
+<div class="section">
+<h2>3. RGB Video Approaches (Direct Video Input)</h2>
+
+<div class="highlight-box">
+  <strong>Research Volume:</strong> 20+ papers, mostly using 2D/3D CNNs or SlowFast networks.
+  <br><strong>Gap:</strong> No papers using Video Foundation Models (VideoMAE, InternVideo) for PD motor scoring.
+  <br><strong>Advantage:</strong> Captures texture, tremor, facial expression (bradykinesia facial masking).
+</div>
+
+<h3>3.1 Key Papers</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Paper</th>
+      <th>Year</th>
+      <th>Method</th>
+      <th>Task</th>
+      <th>Result</th>
+      <th>Foundation Model?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Williams et al.</td>
+      <td>2020</td>
+      <td>3D ResNet</td>
+      <td>Gait</td>
+      <td>Acc 72%</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td>Islam et al.</td>
+      <td>2021</td>
+      <td>I3D + SlowFast</td>
+      <td>Gait</td>
+      <td>r=0.76</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td>Li et al.</td>
+      <td>2022</td>
+      <td>Video Swin Transformer</td>
+      <td>Tremor</td>
+      <td>Acc 85%</td>
+      <td><span class="tag tag-orange">Partial (pretrained)</span></td>
+    </tr>
+    <tr>
+      <td>Rahman et al.</td>
+      <td>2023</td>
+      <td>R(2+1)D</td>
+      <td>Finger Tapping</td>
+      <td>MAE 0.6</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td>PD4T Baseline</td>
+      <td>2024</td>
+      <td>3D CNN (C3D)</td>
+      <td>4 Tasks</td>
+      <td>Benchmark</td>
+      <td><span class="tag tag-red">No</span></td>
+    </tr>
+    <tr>
+      <td>Guo et al.</td>
+      <td>2024</td>
+      <td>TimeSformer</td>
+      <td>Gait + FT</td>
+      <td>r=0.80</td>
+      <td><span class="tag tag-orange">Partial</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>3.2 Gap Analysis</h3>
+<div class="gap-box">
+  <strong>Gap: Video Foundation Models never applied to UPDRS scoring</strong>
+  <ul>
+    <li><strong>VideoMAE v2</strong> (CVPR 2023, self-supervised): 0 papers for PD motor</li>
+    <li><strong>InternVideo2</strong> (2024, 6B parameters): 0 papers for medical movement</li>
+    <li><strong>Video-LLaVA</strong> (2024, video understanding): 0 papers for clinical scoring</li>
+    <li>All existing work uses supervised-only training on small PD datasets</li>
+    <li>Foundation models could enable few-shot learning on limited clinical data</li>
+  </ul>
+</div>
+
+<h3>3.3 What RGB Captures That Skeleton Misses</h3>
+<ul>
+  <li><strong>Tremor details:</strong> Fine finger tremor, lip tremor (lost in skeleton keypoints)</li>
+  <li><strong>Facial masking:</strong> Hypomimia (reduced facial expression), a key PD sign</li>
+  <li><strong>Skin/muscle tone:</strong> Visual rigidity cues during movement</li>
+  <li><strong>Freezing of gait:</strong> Subtle hesitation patterns in RGB texture</li>
+  <li><strong>Environmental context:</strong> Floor type, obstacles (affecting gait assessment)</li>
+</ul>
+</div>
+
+<!-- Section 4: VLM -->
+<div class="section">
+<h2>4. VLM Approaches (Vision-Language Models)</h2>
+
+<div class="highlight-box">
+  <strong>Research Volume: 0 papers for PD motor UPDRS scoring</strong>
+  <br><strong>Highest Novelty:</strong> Completely unexplored territory.
+  <br><strong>Available Models:</strong> GPT-4o, Gemini 1.5 Pro, Qwen2-VL, Video-LLaVA.
+  <br><strong>Key Advantage:</strong> Zero-shot clinical reasoning with natural language output.
+</div>
+
+<h3>4.1 Related Work (Non-PD / Non-Motor)</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Paper</th>
+      <th>Year</th>
+      <th>Model</th>
+      <th>Application</th>
+      <th>Relevance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Yang et al.</td>
+      <td>2024</td>
+      <td>GPT-4V</td>
+      <td>Surgical skill assessment</td>
+      <td>VLM scoring motor actions (non-PD)</td>
+    </tr>
+    <tr>
+      <td>Duan et al.</td>
+      <td>2024</td>
+      <td>GPT-4o + Gemini</td>
+      <td>Action quality assessment</td>
+      <td>Video scoring with VLM (sports)</td>
+    </tr>
+    <tr>
+      <td>He et al.</td>
+      <td>2024</td>
+      <td>Med-PaLM M</td>
+      <td>Medical image analysis</td>
+      <td>Multimodal medical AI (not video)</td>
+    </tr>
+    <tr>
+      <td>Chen et al.</td>
+      <td>2025</td>
+      <td>Qwen2-VL</td>
+      <td>Physical rehab assessment</td>
+      <td>VLM for movement quality (non-PD)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>4.2 Why VLM = Highest Novelty</h3>
+<div class="novelty-box">
+  <strong>Zero existing papers = complete first-mover advantage</strong>
+  <ul>
+    <li><strong>Zero-shot scoring:</strong> No training required, just MDS-UPDRS criteria in prompt</li>
+    <li><strong>Clinical reasoning:</strong> VLM can <em>explain</em> why a score was given (unlike black-box models)</li>
+    <li><strong>Multi-task capability:</strong> Same model handles Gait, FT, Hand, Leg without retraining</li>
+    <li><strong>Scalability:</strong> No dataset-specific training pipeline needed</li>
+    <li><strong>Clinical acceptability:</strong> Explainable AI is critical for medical adoption</li>
+  </ul>
+</div>
+</div>
+
+<!-- Section 5: Comparative Gap Matrix -->
+<div class="section">
+<h2>5. Comparative Gap Analysis</h2>
+
+<h3>5.1 Research Saturation by Area</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Dimension</th>
+      <th>Skeleton (2D/3D)</th>
+      <th>SMPL (3D Mesh)</th>
+      <th>RGB Video</th>
+      <th>VLM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Paper Count</strong></td>
+      <td>25+ papers</td>
+      <td>~5 papers</td>
+      <td>20+ papers</td>
+      <td><strong>0 papers</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Single-Dataset</strong></td>
+      <td><span class="tag tag-red">Saturated</span></td>
+      <td><span class="tag tag-orange">Emerging</span></td>
+      <td><span class="tag tag-red">Saturated</span></td>
+      <td><span class="tag tag-green">Unexplored</span></td>
+    </tr>
+    <tr>
+      <td><strong>Cross-Dataset</strong></td>
+      <td>1 paper (Gait only)</td>
+      <td>1 paper (CARE-PD)</td>
+      <td><strong>0 papers</strong></td>
+      <td><strong>0 papers</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Multi-Task</strong></td>
+      <td>2-3 papers</td>
+      <td>0 papers</td>
+      <td>1 paper (PD4T)</td>
+      <td><strong>0 papers</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Domain Adaptation</strong></td>
+      <td><strong>0 papers</strong></td>
+      <td>0 papers</td>
+      <td><strong>0 papers</strong></td>
+      <td>N/A (zero-shot)</td>
+    </tr>
+    <tr>
+      <td><strong>Foundation Models</strong></td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td><strong>0 papers</strong></td>
+      <td><strong>0 papers</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Explainability</strong></td>
+      <td>Feature importance</td>
+      <td>Feature importance</td>
+      <td>Grad-CAM</td>
+      <td><strong>Natural language</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.2 Novelty Ranking</h3>
+
+<div style="margin: 20px 0;">
+  <div class="novelty-meter">
+    <span style="min-width:180px; font-weight:600;">Paper 4: VLM</span>
+    <div class="meter-bar"><div class="meter-fill meter-high" style="width:95%"></div></div>
+    <span class="tag tag-green">Highest (0 papers)</span>
+  </div>
+  <div class="novelty-meter">
+    <span style="min-width:180px; font-weight:600;">Paper 2: RGB Foundation</span>
+    <div class="meter-bar"><div class="meter-fill meter-high" style="width:80%"></div></div>
+    <span class="tag tag-green">High (0 FM papers)</span>
+  </div>
+  <div class="novelty-meter">
+    <span style="min-width:180px; font-weight:600;">Paper 1: Skeleton Cross-DS</span>
+    <div class="meter-bar"><div class="meter-fill meter-high" style="width:70%"></div></div>
+    <span class="tag tag-blue">High (non-gait gap)</span>
+  </div>
+  <div class="novelty-meter">
+    <span style="min-width:180px; font-weight:600;">Paper 3: Benchmark DS</span>
+    <div class="meter-bar"><div class="meter-fill meter-medium" style="width:50%"></div></div>
+    <span class="tag tag-orange">Medium (needs own data)</span>
+  </div>
+</div>
+
+<h3>5.3 Task Coverage Gap</h3>
+<table>
+  <thead>
+    <tr>
+      <th>UPDRS Task</th>
+      <th>Skeleton Studies</th>
+      <th>Cross-Dataset</th>
+      <th>RGB Studies</th>
+      <th>VLM Studies</th>
+      <th>Gap Level</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Gait (3.10)</strong></td>
+      <td>15+ papers</td>
+      <td>1 (CARE-PD)</td>
+      <td>10+ papers</td>
+      <td>0</td>
+      <td><span class="tag tag-orange">Moderate</span></td>
+    </tr>
+    <tr>
+      <td><strong>Finger Tapping (3.4)</strong></td>
+      <td>8+ papers</td>
+      <td><strong>0</strong></td>
+      <td>5+ papers</td>
+      <td>0</td>
+      <td><span class="tag tag-red">High</span></td>
+    </tr>
+    <tr>
+      <td><strong>Hand Movement (3.5)</strong></td>
+      <td>3-5 papers</td>
+      <td><strong>0</strong></td>
+      <td>2-3 papers</td>
+      <td>0</td>
+      <td><span class="tag tag-red">Very High</span></td>
+    </tr>
+    <tr>
+      <td><strong>Leg Agility (3.8)</strong></td>
+      <td>2-3 papers</td>
+      <td><strong>0</strong></td>
+      <td>1-2 papers</td>
+      <td>0</td>
+      <td><span class="tag tag-red">Very High</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- Section 6: Our Differentiation -->
+<div class="section">
+<h2>6. Our Differentiation Strategy</h2>
+
+<h3>6.1 Four-Paper Portfolio</h3>
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Paper 1: Skeleton</th>
+      <th>Paper 2: RGB</th>
+      <th>Paper 3: Benchmark</th>
+      <th>Paper 4: VLM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Core Novelty</strong></td>
+      <td>3D skeleton cross-dataset for non-gait tasks (FT, Hand, Leg)</td>
+      <td>Video Foundation Model (VideoMAE) for UPDRS scoring</td>
+      <td>Multi-representation benchmark (own data)</td>
+      <td>First VLM UPDRS scoring with clinical reasoning</td>
+    </tr>
+    <tr>
+      <td><strong>Key Method</strong></td>
+      <td>MotionBERT 3D lifting + LODO evaluation + Domain adaptation</td>
+      <td>VideoMAE v2 fine-tuning + InternVideo features</td>
+      <td>3-level representation (RGB+Skeleton+Kinematic)</td>
+      <td>GPT-4o / Gemini zero-shot + few-shot + CoT prompting</td>
+    </tr>
+    <tr>
+      <td><strong>vs CARE-PD</strong></td>
+      <td>Multi-task (4 tasks vs 1) + Lightweight 3D skeleton (vs heavy SMPL)</td>
+      <td>Different paradigm (RGB vs skeleton)</td>
+      <td>Multi-representation (vs single)</td>
+      <td>Completely different (VLM vs traditional ML)</td>
+    </tr>
+    <tr>
+      <td><strong>Datasets</strong></td>
+      <td>PD4T + TULIP + UDysRS + CARE-PD</td>
+      <td>PD4T + TULIP (need raw video)</td>
+      <td>Own data + public datasets</td>
+      <td>PD4T + TULIP (need raw video)</td>
+    </tr>
+    <tr>
+      <td><strong>Own Data Needed?</strong></td>
+      <td><span class="tag tag-green">No</span></td>
+      <td><span class="tag tag-green">No</span></td>
+      <td><span class="tag tag-red">Yes (50+ patients)</span></td>
+      <td><span class="tag tag-green">No</span></td>
+    </tr>
+    <tr>
+      <td><strong>Target Venue</strong></td>
+      <td>IEEE JBHI / IEEE TNSRE</td>
+      <td>MICCAI / CVPR Workshop</td>
+      <td>Nature Scientific Data</td>
+      <td>Nature Medicine / Lancet Digital Health</td>
+    </tr>
+    <tr>
+      <td><strong>Timeline</strong></td>
+      <td>H1 2026 (open data)</td>
+      <td>H1-H2 2026</td>
+      <td>H2 2026 (needs own data)</td>
+      <td>H1 2026 (open data)</td>
+    </tr>
+    <tr>
+      <td><strong>Novelty Level</strong></td>
+      <td><span class="tag tag-blue">High</span></td>
+      <td><span class="tag tag-green">High</span></td>
+      <td><span class="tag tag-orange">Medium</span></td>
+      <td><span class="tag tag-green">Highest</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>6.2 Execution Priority (Open Data First)</h3>
+<div style="margin: 16px 0;">
+  <div class="timeline-item">
+    <div class="timeline-date">Phase 1<br>Mar-Jun 2026</div>
+    <div class="timeline-content">
+      <strong>Paper 1 (Skeleton) + Paper 4 (VLM) in parallel</strong><br>
+      Both can be done with open datasets only (PD4T, TULIP).<br>
+      Paper 4 has highest novelty and lower implementation complexity (API calls vs model training).
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-date">Phase 2<br>Jun-Sep 2026</div>
+    <div class="timeline-content">
+      <strong>Paper 2 (RGB Foundation Model)</strong><br>
+      Requires GPU for VideoMAE fine-tuning (HPC cluster). Can start after Paper 1 baseline is established.
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-date">Phase 3<br>Sep-Dec 2026</div>
+    <div class="timeline-content">
+      <strong>Paper 3 (Benchmark Dataset)</strong><br>
+      Requires own data collection (IRB + patient recruitment). Builds on Papers 1, 2, 4 methods.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Section 7: Key Takeaways -->
+<div class="section">
+<h2>7. Key Takeaways</h2>
+
+<div class="card-grid">
+  <div class="card" style="border-left: 4px solid #43a047;">
+    <h4>Biggest Opportunity</h4>
+    <p>VLM for UPDRS scoring = <strong>0 papers worldwide</strong>. First paper here gets maximum citation impact. GPT-4o/Gemini can be tested with just API calls + PD4T videos.</p>
+  </div>
+  <div class="card" style="border-left: 4px solid #1976d2;">
+    <h4>Strongest Technical Gap</h4>
+    <p>Cross-dataset generalization for <strong>non-gait tasks</strong> = 0 papers. CARE-PD only covers Gait. Finger Tapping, Hand Movement, Leg Agility are completely open.</p>
+  </div>
+  <div class="card" style="border-left: 4px solid #e65100;">
+    <h4>Avoid Saturated Area</h4>
+    <p>Single-dataset, single-task skeleton analysis (2D OpenPose/MediaPipe + ML classifier) = <strong>25+ papers already exist</strong>. No novelty in repeating this.</p>
+  </div>
+  <div class="card" style="border-left: 4px solid #7b1fa2;">
+    <h4>Strategic Recommendation</h4>
+    <p>Start with <strong>Paper 4 (VLM) + Paper 1 (Skeleton cross-dataset)</strong> in parallel using open data. Both are feasible in H1 2026 without own data collection.</p>
+  </div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDA: PD4T + TULIP Datasets</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2b6cb0;
+            --accent: #ed8936;
+            --success: #38a169;
+            --danger: #e53e3e;
+            --warning: #d69e2e;
+            --bg: #f7fafc;
+            --card: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+
+        .hero {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 50%, #718096 100%);
+            color: white; padding: 50px 40px; text-align: center;
+        }
+        .hero h1 { font-size: 2.5em; font-weight: 800; margin-bottom: 8px; }
+        .hero .sub { font-size: 1.2em; opacity: 0.9; }
+        .hero .badges { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+        .hero .badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 6px 18px; border-radius: 20px; font-size: 0.9em; }
+
+        .nav { background: var(--card); border-bottom: 2px solid var(--border); padding: 12px 40px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .nav a { text-decoration: none; color: var(--text-light); padding: 5px 12px; border-radius: 6px; font-size: 0.85em; transition: all 0.2s; }
+        .nav a:hover { background: var(--primary); color: white; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 25px 40px; }
+        .section { margin-bottom: 45px; }
+        .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 3px solid var(--primary); }
+        .section-num { background: var(--primary); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+        .section-header h2 { font-size: 1.5em; color: var(--primary); }
+
+        .card { background: var(--card); border-radius: 10px; padding: 22px; margin-bottom: 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border: 1px solid var(--border); }
+        .card h3 { color: var(--primary); margin-bottom: 10px; font-size: 1.1em; }
+        .card h4 { color: var(--primary-light); margin-bottom: 6px; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        @media (max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9em; }
+        th { background: var(--primary); color: white; padding: 10px 12px; text-align: left; font-weight: 600; }
+        td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+        tr:nth-child(even) td { background: #f8fafc; }
+        tr:hover td { background: #edf2f7; }
+
+        .highlight { background: linear-gradient(135deg, #ebf8ff, #bee3f8); border-left: 4px solid var(--primary-light); padding: 18px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+        .highlight-warn { background: linear-gradient(135deg, #fffff0, #fefcbf); border-left: 4px solid var(--warning); padding: 18px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+        .highlight-danger { background: linear-gradient(135deg, #fff5f5, #fed7d7); border-left: 4px solid var(--danger); padding: 18px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+        .highlight-success { background: linear-gradient(135deg, #f0fff4, #c6f6d5); border-left: 4px solid var(--success); padding: 18px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.78em; font-weight: 600; margin: 1px; }
+        .tag-blue { background: #bee3f8; color: #2b6cb0; }
+        .tag-green { background: #c6f6d5; color: #276749; }
+        .tag-orange { background: #feebc8; color: #c05621; }
+        .tag-red { background: #fed7d7; color: #c53030; }
+        .tag-purple { background: #e9d8fd; color: #6b46c1; }
+
+        .stat-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
+        .stat-box { flex: 1; min-width: 100px; background: white; border-radius: 8px; padding: 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.06); border: 1px solid var(--border); }
+        .stat-num { font-size: 1.8em; font-weight: 800; color: var(--primary); }
+        .stat-label { font-size: 0.78em; color: var(--text-light); margin-top: 3px; }
+
+        /* Bar chart CSS */
+        .bar-chart { margin: 10px 0; }
+        .bar-row { display: flex; align-items: center; margin: 4px 0; }
+        .bar-label { width: 70px; font-size: 0.85em; font-weight: 600; text-align: right; padding-right: 10px; }
+        .bar-container { flex: 1; height: 24px; background: #edf2f7; border-radius: 4px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; display: flex; align-items: center; padding-left: 8px; font-size: 0.75em; color: white; font-weight: 600; }
+        .bar-value { margin-left: 8px; font-size: 0.82em; color: var(--text-light); min-width: 80px; }
+
+        .bar-s0 { background: linear-gradient(90deg, #48bb78, #38a169); }
+        .bar-s1 { background: linear-gradient(90deg, #4299e1, #3182ce); }
+        .bar-s2 { background: linear-gradient(90deg, #ed8936, #dd6b20); }
+        .bar-s3 { background: linear-gradient(90deg, #e53e3e, #c53030); }
+        .bar-s4 { background: linear-gradient(90deg, #9b2c2c, #742a2a); }
+
+        .dur-chart .bar-fill { background: linear-gradient(90deg, #4299e1, #2b6cb0); }
+
+        .footer { background: var(--primary); color: white; padding: 25px 40px; text-align: center; margin-top: 30px; }
+        .footer p { opacity: 0.8; font-size: 0.88em; }
+
+        ul, ol { margin-left: 18px; }
+        li { margin: 4px 0; }
+        strong { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>EDA: PD4T + TULIP Datasets</h1>
+    <p class="sub">MotorExam Benchmark Data Exploration</p>
+    <div class="badges">
+        <span class="badge">PD4T: 2,932 videos</span>
+        <span class="badge">TULIP: ~2,250 videos</span>
+        <span class="badge">4 MDS-UPDRS Tasks</span>
+        <span class="badge">UPDRS Score 0-4</span>
+        <span class="badge">2026-02-09</span>
+    </div>
+</div>
+
+<div class="nav">
+    <div class="nav-inner">
+        <a href="#s1">1. Overview</a>
+        <a href="#s2">2. PD4T Score</a>
+        <a href="#s3">3. PD4T Duration</a>
+        <a href="#s4">4. Score 3-4</a>
+        <a href="#s5">5. TULIP</a>
+        <a href="#s6">6. PD4T vs TULIP</a>
+        <a href="#s7">7. VLM 시사점</a>
+        <a href="#s8">8. QA Dataset</a>
+        <a href="#s9">9. 필터링</a>
+        <a href="#s10">10. 작년 결과</a>
+        <a href="#s11">11. 올해 계획</a>
+        <a href="#s12">12. 재검증</a>
+        <a href="#s13">13. Action Items</a>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- Section 1 -->
+<div class="section" id="s1">
+    <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>Dataset Overview</h2>
+    </div>
+
+    <div class="stat-row">
+        <div class="stat-box">
+            <div class="stat-num">2,932</div>
+            <div class="stat-label">PD4T Videos</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">~2,250</div>
+            <div class="stat-label">TULIP Videos</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">30+15</div>
+            <div class="stat-label">Subjects (PD4T+TULIP)</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">4+25</div>
+            <div class="stat-label">UPDRS Tasks</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num">0-4</div>
+            <div class="stat-label">Score Range</div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3>PD4T Dataset</h3>
+            <table>
+                <tr><td><strong>출처</strong></td><td>Bristol University (PECoP, 2022)</td></tr>
+                <tr><td><strong>피험자</strong></td><td>30명 (PD patients only)</td></tr>
+                <tr><td><strong>비디오</strong></td><td>2,932개 (L/R 포함)</td></tr>
+                <tr><td><strong>Tasks</strong></td><td>Gait, Finger Tapping, Hand Movement, Leg Agility</td></tr>
+                <tr><td><strong>해상도</strong></td><td>854-856 x 480 (SD)</td></tr>
+                <tr><td><strong>FPS</strong></td><td>25-30 fps</td></tr>
+                <tr><td><strong>카메라</strong></td><td>Single RGB</td></tr>
+                <tr><td><strong>Annotation</strong></td><td>1 rater (trained)</td></tr>
+                <tr><td><strong>접근성</strong></td><td>Email request</td></tr>
+            </table>
+        </div>
+        <div class="card">
+            <h3>TULIP Dataset</h3>
+            <table>
+                <tr><td><strong>출처</strong></td><td>Duke University (CVPR 2024)</td></tr>
+                <tr><td><strong>피험자</strong></td><td>15명 (10 PD + 5 Healthy)</td></tr>
+                <tr><td><strong>비디오</strong></td><td>~2,250개 (6 cameras x 25 tasks)</td></tr>
+                <tr><td><strong>Tasks</strong></td><td>전체 MDS-UPDRS Part III (25개)</td></tr>
+                <tr><td><strong>해상도</strong></td><td>1920 x 1200 (HD)</td></tr>
+                <tr><td><strong>FPS</strong></td><td>80 fps</td></tr>
+                <tr><td><strong>카메라</strong></td><td>6 synchronized cameras</td></tr>
+                <tr><td><strong>Annotation</strong></td><td>3 experts (ICC=0.92)</td></tr>
+                <tr><td><strong>접근성</strong></td><td>IRB required (Zenodo)</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>PD4T Task별 비디오 수</h3>
+        <table>
+            <tr>
+                <th>Task</th>
+                <th>Total</th>
+                <th>Train</th>
+                <th>Valid</th>
+                <th>Test</th>
+                <th>Subjects</th>
+                <th>L/R</th>
+            </tr>
+            <tr>
+                <td>Finger Tapping</td>
+                <td><strong>807</strong></td>
+                <td>561</td>
+                <td>117</td>
+                <td>128</td>
+                <td>30</td>
+                <td>Left + Right</td>
+            </tr>
+            <tr>
+                <td>Gait</td>
+                <td><strong>426</strong></td>
+                <td>298</td>
+                <td>62</td>
+                <td>66</td>
+                <td>30</td>
+                <td>N/A (bilateral)</td>
+            </tr>
+            <tr>
+                <td>Hand Movement</td>
+                <td><strong>848</strong></td>
+                <td>591</td>
+                <td>126</td>
+                <td>131</td>
+                <td>30</td>
+                <td>Left + Right</td>
+            </tr>
+            <tr>
+                <td>Leg Agility</td>
+                <td><strong>851</strong></td>
+                <td>593</td>
+                <td>124</td>
+                <td>134</td>
+                <td>30</td>
+                <td>Left + Right</td>
+            </tr>
+            <tr style="background:#e2e8f0;">
+                <td><strong>Total</strong></td>
+                <td><strong>2,932</strong></td>
+                <td><strong>2,043</strong></td>
+                <td><strong>429</strong></td>
+                <td><strong>459</strong></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        <p style="font-size:0.85em; color:var(--text-light); margin-top:6px;">
+            * Stratified split 기준 (data leakage 해결 버전)<br>
+            * Gait 외 tasks는 좌/우 별도 영상 → 비디오 수가 약 2배
+        </p>
+    </div>
+</div>
+
+<!-- Section 2: Score Distribution -->
+<div class="section" id="s2">
+    <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>PD4T UPDRS Score Distribution</h2>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3>Finger Tapping (N=806)</h3>
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <div class="bar-label">Score 0</div>
+                    <div class="bar-container"><div class="bar-fill bar-s0" style="width:18.9%">152</div></div>
+                    <div class="bar-value">18.9%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 1</div>
+                    <div class="bar-container"><div class="bar-fill bar-s1" style="width:57.7%">465</div></div>
+                    <div class="bar-value">57.7%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 2</div>
+                    <div class="bar-container"><div class="bar-fill bar-s2" style="width:20.3%">164</div></div>
+                    <div class="bar-value">20.3%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 3</div>
+                    <div class="bar-container"><div class="bar-fill bar-s3" style="width:2.9%"></div></div>
+                    <div class="bar-value">2.9% (23)</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 4</div>
+                    <div class="bar-container"><div class="bar-fill bar-s4" style="width:0.5%"></div></div>
+                    <div class="bar-value">0.2% (2)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Gait (N=426)</h3>
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <div class="bar-label">Score 0</div>
+                    <div class="bar-container"><div class="bar-fill bar-s0" style="width:46.0%">196</div></div>
+                    <div class="bar-value">46.0%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 1</div>
+                    <div class="bar-container"><div class="bar-fill bar-s1" style="width:37.1%">158</div></div>
+                    <div class="bar-value">37.1%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 2</div>
+                    <div class="bar-container"><div class="bar-fill bar-s2" style="width:15.0%">64</div></div>
+                    <div class="bar-value">15.0%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 3</div>
+                    <div class="bar-container"><div class="bar-fill bar-s3" style="width:1.9%"></div></div>
+                    <div class="bar-value">1.9% (8)</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 4</div>
+                    <div class="bar-container"><div class="bar-fill bar-s4" style="width:0.5%"></div></div>
+                    <div class="bar-value">0% (0)</div>
+                </div>
+            </div>
+            <div class="highlight-danger" style="margin-top:8px; padding:10px;">
+                <strong>Score 4 = 0개</strong> (혼자 못 걸음 → 촬영 자체가 어려움)
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Hand Movement (N=848)</h3>
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <div class="bar-label">Score 0</div>
+                    <div class="bar-container"><div class="bar-fill bar-s0" style="width:27.6%">234</div></div>
+                    <div class="bar-value">27.6%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 1</div>
+                    <div class="bar-container"><div class="bar-fill bar-s1" style="width:48.0%">407</div></div>
+                    <div class="bar-value">48.0%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 2</div>
+                    <div class="bar-container"><div class="bar-fill bar-s2" style="width:21.1%">179</div></div>
+                    <div class="bar-value">21.1%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 3</div>
+                    <div class="bar-container"><div class="bar-fill bar-s3" style="width:2.7%"></div></div>
+                    <div class="bar-value">2.7% (23)</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 4</div>
+                    <div class="bar-container"><div class="bar-fill bar-s4" style="width:0.6%"></div></div>
+                    <div class="bar-value">0.6% (5)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Leg Agility (N=851)</h3>
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <div class="bar-label">Score 0</div>
+                    <div class="bar-container"><div class="bar-fill bar-s0" style="width:47.8%">407</div></div>
+                    <div class="bar-value">47.8%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 1</div>
+                    <div class="bar-container"><div class="bar-fill bar-s1" style="width:44.2%">376</div></div>
+                    <div class="bar-value">44.2%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 2</div>
+                    <div class="bar-container"><div class="bar-fill bar-s2" style="width:6.3%">54</div></div>
+                    <div class="bar-value">6.3%</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 3</div>
+                    <div class="bar-container"><div class="bar-fill bar-s3" style="width:1.3%"></div></div>
+                    <div class="bar-value">1.3% (11)</div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Score 4</div>
+                    <div class="bar-container"><div class="bar-fill bar-s4" style="width:0.4%"></div></div>
+                    <div class="bar-value">0.4% (3)</div>
+                </div>
+            </div>
+            <div class="highlight-warn" style="margin-top:8px; padding:10px;">
+                <strong>Score 0+1 = 92%</strong> → 가장 심한 불균형
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Score Distribution Summary</h3>
+        <table>
+            <tr>
+                <th>Task</th>
+                <th>Score 0</th>
+                <th>Score 1</th>
+                <th>Score 2</th>
+                <th>Score 3</th>
+                <th>Score 4</th>
+                <th>Score 0+1 비율</th>
+            </tr>
+            <tr>
+                <td>Finger Tapping</td>
+                <td>152 (19%)</td>
+                <td>465 (58%)</td>
+                <td>164 (20%)</td>
+                <td>23 (3%)</td>
+                <td>2 (0.2%)</td>
+                <td><strong>77%</strong></td>
+            </tr>
+            <tr>
+                <td>Gait</td>
+                <td>196 (46%)</td>
+                <td>158 (37%)</td>
+                <td>64 (15%)</td>
+                <td>8 (2%)</td>
+                <td>0 (0%)</td>
+                <td><strong>83%</strong></td>
+            </tr>
+            <tr>
+                <td>Hand Movement</td>
+                <td>234 (28%)</td>
+                <td>407 (48%)</td>
+                <td>179 (21%)</td>
+                <td>23 (3%)</td>
+                <td>5 (0.6%)</td>
+                <td><strong>76%</strong></td>
+            </tr>
+            <tr>
+                <td>Leg Agility</td>
+                <td>407 (48%)</td>
+                <td>376 (44%)</td>
+                <td>54 (6%)</td>
+                <td>11 (1%)</td>
+                <td>3 (0.4%)</td>
+                <td><strong>92%</strong></td>
+            </tr>
+        </table>
+
+        <div class="highlight-warn" style="margin-top:12px;">
+            <strong>핵심 시사점: 진짜 어려운 건 0 vs 1 vs 2 구별이다</strong><br><br>
+            <ul>
+                <li><strong>Score 3-4</strong>: 시각적으로 매우 명확 (못 걸음/거의 못함) → VLM이 쉽게 맞춰야 함</li>
+                <li><strong>Score 0 vs 1</strong>: 미세한 차이 (약간의 amplitude 감소, 살짝 느림) → 이게 진짜 challenge</li>
+                <li><strong>Score 1 vs 2</strong>: 중간 난이도 → VLM 성능의 핵심 구간</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Duration -->
+<div class="section" id="s3">
+    <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>PD4T Video Duration</h2>
+    </div>
+
+    <div class="card">
+        <h3>Task별 영상 길이</h3>
+        <table>
+            <tr>
+                <th>Task</th>
+                <th>평균</th>
+                <th>최소</th>
+                <th>최대</th>
+                <th>해상도</th>
+                <th>FPS</th>
+                <th>VLM 적합성</th>
+            </tr>
+            <tr>
+                <td>Finger Tapping</td>
+                <td><strong>6.9초</strong></td>
+                <td>4.3초</td>
+                <td>28.4초</td>
+                <td>856x480</td>
+                <td>25</td>
+                <td><span class="tag tag-green">적합</span></td>
+            </tr>
+            <tr>
+                <td>Gait</td>
+                <td><strong>31.8초</strong></td>
+                <td>10.8초</td>
+                <td>449초 (!)</td>
+                <td>854x480</td>
+                <td>30</td>
+                <td><span class="tag tag-orange">필터링 필요</span></td>
+            </tr>
+            <tr>
+                <td>Hand Movement</td>
+                <td><strong>8.1초</strong></td>
+                <td>4.4초</td>
+                <td>40.3초</td>
+                <td>854x480</td>
+                <td>25</td>
+                <td><span class="tag tag-green">적합</span></td>
+            </tr>
+            <tr>
+                <td>Leg Agility</td>
+                <td><strong>7.2초</strong></td>
+                <td>4.3초</td>
+                <td>22.9초</td>
+                <td>854x480</td>
+                <td>30</td>
+                <td><span class="tag tag-green">적합</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>Gait 영상 길이 분포 — 필터링 기준</h3>
+        <table>
+            <tr>
+                <th>기준</th>
+                <th>포함 비디오</th>
+                <th>비율</th>
+                <th>제외 수</th>
+                <th>판단</th>
+            </tr>
+            <tr>
+                <td>&le; 20초</td>
+                <td>61 / 426</td>
+                <td>14%</td>
+                <td>365</td>
+                <td><span class="tag tag-red">너무 많이 제외</span></td>
+            </tr>
+            <tr>
+                <td>&le; 30초</td>
+                <td>303 / 426</td>
+                <td>71%</td>
+                <td>123</td>
+                <td><span class="tag tag-orange">약간 많이 제외</span></td>
+            </tr>
+            <tr style="background:#f0fff4;">
+                <td><strong>&le; 45초</strong></td>
+                <td><strong>389 / 426</strong></td>
+                <td><strong>91%</strong></td>
+                <td><strong>37</strong></td>
+                <td><span class="tag tag-green">추천</span></td>
+            </tr>
+            <tr>
+                <td>&le; 60초</td>
+                <td>402 / 426</td>
+                <td>94%</td>
+                <td>24</td>
+                <td><span class="tag tag-green">좋음</span></td>
+            </tr>
+            <tr>
+                <td>&le; 120초</td>
+                <td>419 / 426</td>
+                <td>98%</td>
+                <td>7</td>
+                <td><span class="tag tag-blue">거의 전부</span></td>
+            </tr>
+        </table>
+
+        <div class="highlight-success" style="margin-top:10px;">
+            <strong>추천: 60초 기준 필터링</strong><br>
+            24개만 제외 (6%) → 402개 유지. 대부분 Score 2-3의 장시간 보행 영상.<br>
+            Gemini 2.5 Pro는 최대 1시간 영상 지원하므로 <strong>필터링 없이 전부 사용도 가능</strong>.
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Gait > 60초 영상 상세 (제외 후보)</h3>
+        <table>
+            <tr><th>Video ID</th><th>길이</th><th>Score</th><th>비고</th></tr>
+            <tr><td>15-008323_062</td><td>449초 (7.5분)</td><td>2</td><td>이상치</td></tr>
+            <tr><td>15-001527_019</td><td>356초 (5.9분)</td><td>3</td><td>중증 → 보행 시간 김</td></tr>
+            <tr><td>13-003768_004</td><td>167초</td><td>2</td><td></td></tr>
+            <tr><td>16-001465_062</td><td>154초</td><td>3</td><td>중증</td></tr>
+            <tr><td>13-005039_004</td><td>127초</td><td>2</td><td></td></tr>
+            <tr><td colspan="4" style="text-align:center; color:var(--text-light);">... 외 19개 (모두 60-126초)</td></tr>
+        </table>
+        <p style="font-size:0.85em; margin-top:6px; color:var(--text-light);">
+            * Score 3 영상(2개)이 길다 = 심한 보행 장애로 코스 완주에 시간이 더 걸림<br>
+            * <strong>제외하지 말고 클리핑</strong>(앞 45초만 사용)하는 것이 더 나은 전략
+        </p>
+    </div>
+</div>
+
+<!-- Section 4: Score 3-4 Analysis -->
+<div class="section" id="s4">
+    <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Score 3-4 상세 분석 — "VLM이 반드시 맞춰야 하는 것"</h2>
+    </div>
+
+    <div class="card">
+        <h3>MDS-UPDRS Score 기준 (임상적 의미)</h3>
+        <table>
+            <tr>
+                <th>Score</th>
+                <th>Label</th>
+                <th>Gait 예시</th>
+                <th>Finger Tapping 예시</th>
+                <th>시각적 명확도</th>
+            </tr>
+            <tr>
+                <td><span class="tag tag-green">0</span></td>
+                <td>Normal</td>
+                <td>정상 보행</td>
+                <td>정상 속도, 일정한 진폭</td>
+                <td>기준점</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-blue">1</span></td>
+                <td>Slight</td>
+                <td>약간의 느림, 미세한 arm swing 감소</td>
+                <td>한 번의 중단 또는 약간 느림</td>
+                <td><span class="tag tag-red">어려움</span> ← VLM Challenge</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-orange">2</span></td>
+                <td>Mild</td>
+                <td>독립 보행 가능하나 명확한 이상</td>
+                <td>2회 이상 중단, 경미한 amplitude 감소</td>
+                <td><span class="tag tag-orange">중간</span></td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-red">3</span></td>
+                <td>Moderate</td>
+                <td><strong>보조기구 필요</strong>, 현저한 느림</td>
+                <td>많은 hesitation, 진폭 명확히 감소</td>
+                <td><span class="tag tag-green">명확</span></td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-red" style="background:#9b2c2c;color:white;">4</span></td>
+                <td>Severe</td>
+                <td><strong>혼자 못 걸음</strong>, 보조 필수</td>
+                <td><strong>거의 수행 불가</strong></td>
+                <td><span class="tag tag-green">매우 명확</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>Score 3-4 비디오 수량</h3>
+        <table>
+            <tr>
+                <th>Task</th>
+                <th>Score 3</th>
+                <th>Score 4</th>
+                <th>합계</th>
+                <th>전체 대비</th>
+                <th>Test set 내</th>
+            </tr>
+            <tr>
+                <td>Finger Tapping</td>
+                <td>23</td>
+                <td>2</td>
+                <td>25</td>
+                <td>3.1%</td>
+                <td>6개 (test)</td>
+            </tr>
+            <tr>
+                <td>Gait</td>
+                <td>8</td>
+                <td>0</td>
+                <td>8</td>
+                <td>1.9%</td>
+                <td>2개 (test)</td>
+            </tr>
+            <tr>
+                <td>Hand Movement</td>
+                <td>23</td>
+                <td>5</td>
+                <td>28</td>
+                <td>3.3%</td>
+                <td>4개 (test)</td>
+            </tr>
+            <tr>
+                <td>Leg Agility</td>
+                <td>11</td>
+                <td>3</td>
+                <td>14</td>
+                <td>1.6%</td>
+                <td>2개 (test)</td>
+            </tr>
+            <tr style="background:#e2e8f0;">
+                <td><strong>Total</strong></td>
+                <td><strong>65</strong></td>
+                <td><strong>10</strong></td>
+                <td><strong>75</strong></td>
+                <td><strong>2.6%</strong></td>
+                <td><strong>14개</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="highlight">
+        <strong>VLM 평가 전략:</strong><br><br>
+        <strong>1. Score 3-4 = "Must-pass" items</strong><br>
+        → VLM이 이것도 못 맞추면 기본 시각 인식 능력 부족 판정<br>
+        → MotorExam에서 "Foundation Gate" 역할 (이걸 통과해야 다음 레벨 의미 있음)<br><br>
+        <strong>2. Score 0 vs 1 = "Expert-level" items</strong><br>
+        → 인간 전문가도 어려운 구간 (inter-rater Kappa ~0.6-0.7)<br>
+        → VLM이 여기서 잘하면 진짜 clinical value 입증<br><br>
+        <strong>3. Score 1 vs 2 = "Clinical threshold"</strong><br>
+        → 치료 결정에 영향 (약물 조절 기준)<br>
+        → 가장 실용적 가치가 높은 구간
+    </div>
+</div>
+
+<!-- Section 5: TULIP -->
+<div class="section" id="s5">
+    <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>TULIP Dataset</h2>
+    </div>
+
+    <div class="card">
+        <h3>TULIP 핵심 정보</h3>
+        <table>
+            <tr><td><strong>Full Name</strong></td><td>Three-dimensional Understanding and Learning of Impairments in Parkinson's disease</td></tr>
+            <tr><td><strong>Publication</strong></td><td>CVPR 2024 (Kim et al., Duke University)</td></tr>
+            <tr><td><strong>Subjects</strong></td><td>15명 (10 PD + 5 Healthy Control)</td></tr>
+            <tr><td><strong>Cameras</strong></td><td>6 synchronized (Basler acA1920-155uc)</td></tr>
+            <tr><td><strong>Resolution</strong></td><td>1920 x 1200 pixels</td></tr>
+            <tr><td><strong>FPS</strong></td><td>80 fps</td></tr>
+            <tr><td><strong>Tasks</strong></td><td>전체 MDS-UPDRS Part III (25개 항목)</td></tr>
+            <tr><td><strong>Raters</strong></td><td>3 experts (2 professors + 1 MD fellow)</td></tr>
+            <tr><td><strong>ICC</strong></td><td>0.92 (excellent)</td></tr>
+            <tr><td><strong>Size</strong></td><td>6.5 TB</td></tr>
+            <tr><td><strong>License</strong></td><td>CC BY-NC-ND 4.0</td></tr>
+            <tr><td><strong>Access</strong></td><td>IRB approval required → Zenodo request</td></tr>
+        </table>
+    </div>
+
+    <div class="highlight-warn">
+        <strong>TULIP 접근 제약</strong><br><br>
+        <ul>
+            <li>Academic institution + <strong>IRB 승인 필수</strong></li>
+            <li>Google Form 신청 → 승인 대기</li>
+            <li>담당: kyungdo.kim@duke.edu</li>
+            <li><strong>Action: 2월 중 IRB 신청 시작 필요</strong></li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>TULIP에만 있는 Tasks (PD4T에 없는 것)</h3>
+        <table>
+            <tr>
+                <th>Category</th>
+                <th>Tasks</th>
+                <th>PD4T 포함</th>
+            </tr>
+            <tr>
+                <td>Finger Tapping</td>
+                <td>Index finger tapping, All fingers tapping</td>
+                <td>Index finger만 ✅</td>
+            </tr>
+            <tr>
+                <td>Hand</td>
+                <td>Hand movement, Guided hand, Pronation/Supination</td>
+                <td>Hand movement만 ✅</td>
+            </tr>
+            <tr>
+                <td>Gait</td>
+                <td>Gait</td>
+                <td>✅</td>
+            </tr>
+            <tr>
+                <td>Leg</td>
+                <td>Leg agility, Standing on one leg</td>
+                <td>Leg agility만 ✅</td>
+            </tr>
+            <tr>
+                <td><strong>TULIP Only</strong></td>
+                <td>Arm straightening, Postural tremor, Rest tremor, Rigidity, Arising from chair, Postural stability, ...</td>
+                <td>❌</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- Section 6: PD4T vs TULIP -->
+<div class="section" id="s6">
+    <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>PD4T vs TULIP 비교</h2>
+    </div>
+
+    <div class="card">
+        <table>
+            <tr>
+                <th>항목</th>
+                <th>PD4T</th>
+                <th>TULIP</th>
+                <th>VLM 실험 영향</th>
+            </tr>
+            <tr>
+                <td>피험자 수</td>
+                <td><strong>30명</strong></td>
+                <td>15명</td>
+                <td>PD4T가 2배 많음</td>
+            </tr>
+            <tr>
+                <td>비디오 수</td>
+                <td><strong>2,932</strong></td>
+                <td>~2,250</td>
+                <td>PD4T 약간 많음</td>
+            </tr>
+            <tr>
+                <td>해상도</td>
+                <td>854x480 (SD)</td>
+                <td><strong>1920x1200 (HD)</strong></td>
+                <td>TULIP이 세부 동작 관찰에 유리</td>
+            </tr>
+            <tr>
+                <td>FPS</td>
+                <td>25-30</td>
+                <td><strong>80</strong></td>
+                <td>TULIP이 빠른 동작 포착에 유리</td>
+            </tr>
+            <tr>
+                <td>카메라</td>
+                <td>Single</td>
+                <td><strong>6 multi-view</strong></td>
+                <td>TULIP은 각도별 비교 가능</td>
+            </tr>
+            <tr>
+                <td>Tasks</td>
+                <td>4</td>
+                <td><strong>25</strong></td>
+                <td>TULIP이 UPDRS 전체 커버</td>
+            </tr>
+            <tr>
+                <td>Annotation 품질</td>
+                <td>1 rater</td>
+                <td><strong>3 experts (ICC 0.92)</strong></td>
+                <td>TULIP Ground Truth 더 신뢰</td>
+            </tr>
+            <tr>
+                <td>Healthy Control</td>
+                <td>없음</td>
+                <td><strong>5명</strong></td>
+                <td>TULIP만 PD vs Normal 가능</td>
+            </tr>
+            <tr>
+                <td>접근성</td>
+                <td><strong>Email request</strong></td>
+                <td>IRB required</td>
+                <td>PD4T가 접근 쉬움</td>
+            </tr>
+            <tr>
+                <td>용량</td>
+                <td>~5.4 GB</td>
+                <td><strong>6.5 TB</strong></td>
+                <td>TULIP 저장 공간 필요</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="highlight-success">
+        <strong>결론: 둘 다 사용하되, 역할을 나눠라</strong><br><br>
+        <table>
+            <tr><th>역할</th><th>추천 데이터셋</th><th>이유</th></tr>
+            <tr><td>VLM 주 실험 (3월)</td><td><strong>PD4T</strong></td><td>접근 가능, 즉시 사용, N 충분</td></tr>
+            <tr><td>고품질 검증</td><td><strong>TULIP</strong></td><td>HD 영상, 3-rater, multi-view</td></tr>
+            <tr><td>QA Training Set</td><td><strong>PD4T</strong></td><td>2,932 videos → 20K+ QA</td></tr>
+            <tr><td>MotorExam Benchmark</td><td><strong>PD4T + TULIP</strong></td><td>다양성 확보</td></tr>
+        </table>
+    </div>
+</div>
+
+<!-- Section 7: VLM Implications -->
+<div class="section" id="s7">
+    <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>VLM 실험 시사점</h2>
+    </div>
+
+    <div class="card">
+        <h3>Score별 VLM 난이도 예측</h3>
+        <table>
+            <tr>
+                <th>비교</th>
+                <th>시각적 차이</th>
+                <th>예상 VLM 정확도</th>
+                <th>임상 중요도</th>
+            </tr>
+            <tr>
+                <td>Normal(0) vs Severe(3-4)</td>
+                <td><span class="tag tag-green">매우 명확</span></td>
+                <td>90%+ (쉬움)</td>
+                <td>낮음 (누구나 구별)</td>
+            </tr>
+            <tr>
+                <td>Normal(0) vs Mild(2)</td>
+                <td><span class="tag tag-orange">중간</span></td>
+                <td>60-75%</td>
+                <td>중간</td>
+            </tr>
+            <tr>
+                <td>Normal(0) vs Slight(1)</td>
+                <td><span class="tag tag-red">미세</span></td>
+                <td>40-60%</td>
+                <td><strong>높음</strong> (조기 발견)</td>
+            </tr>
+            <tr>
+                <td>Slight(1) vs Mild(2)</td>
+                <td><span class="tag tag-red">미세</span></td>
+                <td>35-55%</td>
+                <td><strong>높음</strong> (치료 결정)</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>Class Imbalance 대응 전략</h3>
+        <div class="grid-2">
+            <div>
+                <h4>Evaluation (MotorExam)</h4>
+                <ul>
+                    <li><strong>Stratified sampling</strong>: 각 score에서 동수 추출</li>
+                    <li>Score 0: 30, Score 1: 30, Score 2: 30, Score 3: 전수 (8-23)</li>
+                    <li>QWK (Quadratic Weighted Kappa) 사용 → imbalance에 강건</li>
+                    <li>Score별 accuracy 따로 리포팅</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Training (QA Set)</h4>
+                <ul>
+                    <li>Score 0-1에서 <strong>다운샘플링</strong></li>
+                    <li>Score 3-4에서 <strong>augmentation</strong> (프롬프트 변형)</li>
+                    <li>YouTube 수집 시 <strong>Score 3-4 우선 수집</strong></li>
+                    <li>TULIP healthy control로 Score 0 다양화</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>480p 해상도의 영향</h3>
+        <div class="highlight-warn">
+            <strong>PD4T는 480p (SD) → Finger Tapping에서 문제 가능</strong><br><br>
+            <ul>
+                <li><strong>Gait</strong>: 전신 움직임 → 480p에서도 충분히 관찰 가능</li>
+                <li><strong>Leg Agility</strong>: 다리 전체 → 480p OK</li>
+                <li><strong>Hand Movement</strong>: 손 전체 → 480p 경계선</li>
+                <li><strong>Finger Tapping</strong>: 손가락 끝 미세 움직임 → <strong>480p 부족할 수 있음</strong></li>
+            </ul>
+            <br>
+            → TULIP (1920x1200)과 비교하면 해상도 영향 정량화 가능<br>
+            → 논문에서 "Resolution as a confounding factor" 분석 가능
+        </div>
+    </div>
+</div>
+
+<!-- Section 8: QA Dataset -->
+<div class="section" id="s8">
+    <div class="section-header">
+        <div class="section-num">8</div>
+        <h2>QA Dataset 규모 산정</h2>
+    </div>
+
+    <div class="card">
+        <h3>Level별 문항 생성 가능 수 (PD4T 기준)</h3>
+        <table>
+            <tr>
+                <th>Level</th>
+                <th>설명</th>
+                <th>소스</th>
+                <th>벤치마크 (Test)</th>
+                <th>Training QA</th>
+                <th>생성 방법</th>
+            </tr>
+            <tr>
+                <td><span class="tag tag-green">L1</span></td>
+                <td>"뭐가 보여?"</td>
+                <td>전체 비디오</td>
+                <td>~100</td>
+                <td>~4,000</td>
+                <td>템플릿 자동</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-blue">L3</span></td>
+                <td>"UPDRS 몇 점?"</td>
+                <td>모든 annotated 비디오</td>
+                <td>~200</td>
+                <td>~6,000</td>
+                <td>annotation 변환 (자동)</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-orange">L4</span></td>
+                <td>"A vs B 누가 심해?"</td>
+                <td>Score 다른 비디오 pair</td>
+                <td>~80</td>
+                <td>~5,000</td>
+                <td>pair 조합 (자동)</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-purple">L6</span></td>
+                <td>"점수 근거 설명해봐"</td>
+                <td>Score 1-3 비디오</td>
+                <td>~40</td>
+                <td>~2,000</td>
+                <td>템플릿 + rubric</td>
+            </tr>
+            <tr style="background:#e2e8f0;">
+                <td></td>
+                <td><strong>Total</strong></td>
+                <td></td>
+                <td><strong>~420</strong></td>
+                <td><strong>~17,000</strong></td>
+                <td></td>
+            </tr>
+        </table>
+
+        <div class="highlight-success" style="margin-top:10px;">
+            <strong>결론: PD4T만으로 Training QA ~17,000개 생성 가능 → LoRA 충분</strong><br>
+            TULIP 추가 시 ~30,000개까지 확장 가능
+        </div>
+    </div>
+</div>
+
+<!-- Section 9: Filtering -->
+<div class="section" id="s9">
+    <div class="section-header">
+        <div class="section-num">9</div>
+        <h2>데이터 필터링 전략</h2>
+    </div>
+
+    <div class="card">
+        <h3>VLM 실험을 위한 필터링</h3>
+        <table>
+            <tr>
+                <th>필터</th>
+                <th>기준</th>
+                <th>제외 수</th>
+                <th>남는 수</th>
+            </tr>
+            <tr>
+                <td>Gait 길이 필터</td>
+                <td>&le; 60초</td>
+                <td>24</td>
+                <td>402</td>
+            </tr>
+            <tr>
+                <td>또는: Gait 클리핑</td>
+                <td>앞 45초만 사용</td>
+                <td>0 (전부 사용)</td>
+                <td>426</td>
+            </tr>
+            <tr>
+                <td>이상치 제외</td>
+                <td>깨진 영상, 빈 프레임</td>
+                <td>~27 (failed log)</td>
+                <td>~2,905</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>Score 기반 Stratified Sampling (MotorExam 벤치마크용)</h3>
+        <p>Test set에서 score 균등 추출 — 각 score에서 가능한 최대 수:</p>
+        <table>
+            <tr>
+                <th>Task</th>
+                <th>S0 (test)</th>
+                <th>S1 (test)</th>
+                <th>S2 (test)</th>
+                <th>S3 (test)</th>
+                <th>S4 (test)</th>
+                <th>균등 추출 시</th>
+            </tr>
+            <tr>
+                <td>Finger Tapping</td>
+                <td>~24</td>
+                <td>~74</td>
+                <td>~26</td>
+                <td>6</td>
+                <td>0</td>
+                <td>6 x 4 = 24개</td>
+            </tr>
+            <tr>
+                <td>Gait</td>
+                <td>~30</td>
+                <td>~24</td>
+                <td>~10</td>
+                <td>2</td>
+                <td>0</td>
+                <td>2 x 4 = 8개</td>
+            </tr>
+            <tr>
+                <td>Hand Movement</td>
+                <td>~36</td>
+                <td>~63</td>
+                <td>~28</td>
+                <td>3</td>
+                <td>1</td>
+                <td>3 x 4 = 12개</td>
+            </tr>
+            <tr>
+                <td>Leg Agility</td>
+                <td>~64</td>
+                <td>~59</td>
+                <td>~9</td>
+                <td>2</td>
+                <td>0</td>
+                <td>2 x 4 = 8개</td>
+            </tr>
+        </table>
+        <p style="font-size:0.85em; margin-top:8px; color:var(--text-light);">
+            * Score 3-4가 bottleneck → 균등 추출 시 총 52개로 줄어듦<br>
+            * <strong>대안</strong>: Score 0-2는 균등 (각 20개), Score 3-4는 전수 사용
+        </p>
+    </div>
+</div>
+
+<!-- Section 10: Previous Results (2024) -->
+<div class="section" id="s10">
+    <div class="section-header">
+        <div class="section-num">10</div>
+        <h2>작년 실험 결과 (2024 SNUH Hawk Eye)</h2>
+    </div>
+
+    <div class="highlight">
+        <strong>출처: "(최종 발표)SNUH HAWK EYE_v1.2.pptx"</strong><br>
+        팀: 공영빈, 김동성, 김두연, 도례미, 전연주, 이영권, 최대현<br>
+        제목: "Vision-Based Explainable AI for Quantitative Motor Assessment in Parkinson's Disease"
+    </div>
+
+    <div class="card">
+        <h3>TULIP 실험 결과</h3>
+        <p style="font-size:0.9em; color:var(--text-light); margin-bottom:10px;">
+            12 subjects, 3 tasks (Finger L, Finger R, Gait), Subject-based split
+        </p>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Type</th>
+                <th>Task</th>
+                <th>Accuracy</th>
+                <th>F1</th>
+                <th>Recall</th>
+                <th>Precision</th>
+            </tr>
+            <tr style="background:#f0fff4;">
+                <td><strong>Random Forest</strong></td>
+                <td>Kinematic ML</td>
+                <td>Finger Tapping</td>
+                <td><strong>89.0%</strong></td>
+                <td><strong>0.860</strong></td>
+                <td>0.930</td>
+                <td>0.930</td>
+            </tr>
+            <tr style="background:#ebf8ff;">
+                <td><strong>ChatGPT5.1</strong></td>
+                <td>VLM</td>
+                <td>Gait</td>
+                <td><strong>80.5%</strong></td>
+                <td>0.543</td>
+                <td>0.556</td>
+                <td>0.611</td>
+            </tr>
+            <tr>
+                <td>Bagging_KNN</td>
+                <td>Skeleton DL</td>
+                <td>Finger Tapping</td>
+                <td>66.7%</td>
+                <td>0.556</td>
+                <td>0.667</td>
+                <td>0.500</td>
+            </tr>
+            <tr>
+                <td>Decision Tree</td>
+                <td>Kinematic ML</td>
+                <td>Gait</td>
+                <td>63.9%</td>
+                <td>0.428</td>
+                <td>0.403</td>
+                <td>0.458</td>
+            </tr>
+            <tr>
+                <td>PoseC3D</td>
+                <td>Skeleton DL</td>
+                <td>Gait</td>
+                <td>63.8%</td>
+                <td>0.320</td>
+                <td>0.320</td>
+                <td>0.320</td>
+            </tr>
+            <tr>
+                <td>VideoMamba</td>
+                <td>Vision DL</td>
+                <td>Gait</td>
+                <td>51.4%</td>
+                <td>0.516</td>
+                <td>0.514</td>
+                <td>0.634</td>
+            </tr>
+            <tr>
+                <td>VideoMamba</td>
+                <td>Vision DL</td>
+                <td>Finger Tapping</td>
+                <td>50.0%</td>
+                <td>0.389</td>
+                <td>0.500</td>
+                <td>0.333</td>
+            </tr>
+            <tr>
+                <td>ST-GCN</td>
+                <td>Skeleton DL</td>
+                <td>Gait</td>
+                <td>41.6%</td>
+                <td>0.290</td>
+                <td>0.290</td>
+                <td>0.290</td>
+            </tr>
+            <tr>
+                <td>GEMMA-3-27B</td>
+                <td>VLM</td>
+                <td>Finger Tapping</td>
+                <td>33.3%</td>
+                <td>0.167</td>
+                <td>0.333</td>
+                <td>0.111</td>
+            </tr>
+            <tr style="background:#fff5f5;">
+                <td><strong>QWEN-2.5-VL</strong></td>
+                <td>VLM</td>
+                <td>Finger Tapping</td>
+                <td><strong>11.0%</strong></td>
+                <td>0.056</td>
+                <td>0.111</td>
+                <td>0.056</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>PD4T 실험 결과</h3>
+        <p style="font-size:0.9em; color:var(--text-light); margin-bottom:10px;">
+            30 subjects, 2 tasks (Finger Tapping, Gait), Stratified split
+        </p>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Type</th>
+                <th>Task</th>
+                <th>Accuracy</th>
+                <th>F1</th>
+                <th>Recall</th>
+                <th>Precision</th>
+            </tr>
+            <tr style="background:#ebf8ff;">
+                <td><strong>ChatGPT5.1</strong></td>
+                <td>VLM</td>
+                <td>Gait</td>
+                <td><strong>64.4%</strong></td>
+                <td>0.516</td>
+                <td>0.513</td>
+                <td>0.598</td>
+            </tr>
+            <tr>
+                <td>Transformer</td>
+                <td>Skeleton DL</td>
+                <td>Finger Tapping</td>
+                <td>62.2%</td>
+                <td>0.256</td>
+                <td>0.333</td>
+                <td>0.207</td>
+            </tr>
+            <tr>
+                <td>VideoMamba</td>
+                <td>Vision DL</td>
+                <td>Finger Tapping</td>
+                <td>59.3%</td>
+                <td>0.252</td>
+                <td>0.318</td>
+                <td>0.208</td>
+            </tr>
+            <tr>
+                <td>SVM</td>
+                <td>Kinematic ML</td>
+                <td>Finger Tapping</td>
+                <td>58.5%</td>
+                <td>0.246</td>
+                <td>0.314</td>
+                <td>0.203</td>
+            </tr>
+            <tr>
+                <td>SVM</td>
+                <td>Kinematic ML</td>
+                <td>Gait</td>
+                <td>56.2%</td>
+                <td>0.455</td>
+                <td>0.453</td>
+                <td>0.520</td>
+            </tr>
+            <tr>
+                <td>RandomForest</td>
+                <td>Skeleton DL</td>
+                <td>Finger Tapping</td>
+                <td>55.6%</td>
+                <td>0.275</td>
+                <td>0.341</td>
+                <td>0.230</td>
+            </tr>
+            <tr>
+                <td>Transformer</td>
+                <td>Skeleton DL</td>
+                <td>Gait</td>
+                <td>50.7%</td>
+                <td>0.362</td>
+                <td>0.380</td>
+                <td>0.351</td>
+            </tr>
+            <tr>
+                <td>VideoMamba</td>
+                <td>Vision DL</td>
+                <td>Gait</td>
+                <td>50.7%</td>
+                <td>0.353</td>
+                <td>0.381</td>
+                <td>0.346</td>
+            </tr>
+            <tr>
+                <td>ChatGPT5.1</td>
+                <td>VLM</td>
+                <td>Finger Tapping</td>
+                <td>45.9%</td>
+                <td>0.284</td>
+                <td>0.315</td>
+                <td>0.308</td>
+            </tr>
+            <tr>
+                <td>MLP</td>
+                <td>Skeleton DL</td>
+                <td>Gait</td>
+                <td>45.2%</td>
+                <td>0.369</td>
+                <td>0.371</td>
+                <td>0.392</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>작년 결과에서 얻은 핵심 인사이트</h3>
+        <div class="grid-2">
+            <div>
+                <h4>VLM이 잘하는 것</h4>
+                <ul>
+                    <li><strong>Gait (거시 운동)</strong>: ChatGPT 80.5% (TULIP)</li>
+                    <li>전신 움직임은 VLM이 잘 인식</li>
+                    <li>Reasoning 생성 가능 (XAI)</li>
+                    <li>웹 UI 프로토타입 구현 완료</li>
+                </ul>
+            </div>
+            <div>
+                <h4>VLM이 못하는 것</h4>
+                <ul>
+                    <li><strong>Finger Tapping (미세 운동)</strong>: Qwen 11%, Gemma 33%</li>
+                    <li>480p 해상도에서 손가락 세부 동작 인식 어려움</li>
+                    <li>F1 Score가 Accuracy보다 훨씬 낮음 → class imbalance 문제</li>
+                    <li>Zero-shot만 시도 → Few-shot/RAG 미검증</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="highlight-warn" style="margin-top:12px;">
+            <strong>작년 발표 Limitations에서 지적된 것:</strong>
+            <ol style="margin-top:6px;">
+                <li>"전체 데이터 수(N)가 적고, 고점수/고중증 환자 데이터 부족"</li>
+                <li>"GPU 자원 제한으로 VLM Full Fine-tuning 미수행"</li>
+                <li>"Kinematic Feature가 Pose Estimation 정확도에 직접 의존"</li>
+                <li>"RGB/Skeleton/VLM 중 단일 모델 의존 → 통합 해석 어려움"</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<!-- Section 11: This Year's Plan -->
+<div class="section" id="s11">
+    <div class="section-header">
+        <div class="section-num">11</div>
+        <h2>올해 VLM 논문: 작년 대비 What's New</h2>
+    </div>
+
+    <div class="card">
+        <h3>작년 vs 올해 비교</h3>
+        <table>
+            <tr>
+                <th>항목</th>
+                <th>작년 (2024 발표)</th>
+                <th>올해 (2026 논문)</th>
+                <th>개선</th>
+            </tr>
+            <tr>
+                <td>VLM 모델</td>
+                <td>ChatGPT5.1, Qwen2.5-VL, Gemma-3</td>
+                <td><strong>+ GPT-4o, Gemini 2.5 Pro, Qwen3-VL</strong></td>
+                <td>최신 모델 추가</td>
+            </tr>
+            <tr>
+                <td>Adaptation</td>
+                <td>Zero-shot only</td>
+                <td><strong>+ Few-shot, RAG, CoT</strong></td>
+                <td>3단계 적응</td>
+            </tr>
+            <tr>
+                <td>Input Strategy</td>
+                <td>Raw frames only</td>
+                <td><strong>+ Skeleton overlay, Kinematic text, Clinical CoT</strong></td>
+                <td>4가지 전략 비교</td>
+            </tr>
+            <tr>
+                <td>Tasks</td>
+                <td>Finger Tapping + Gait</td>
+                <td><strong>+ Hand Movement + Leg Agility</strong></td>
+                <td>4개 task 전체</td>
+            </tr>
+            <tr>
+                <td>Evaluation</td>
+                <td>Accuracy, F1 (단순)</td>
+                <td><strong>MotorExam 벤치마크 (L1,L3,L4,L6)</strong></td>
+                <td>체계적 평가</td>
+            </tr>
+            <tr>
+                <td>Metrics</td>
+                <td>Accuracy, F1</td>
+                <td><strong>+ QWK, Adjacent Acc, Score별 분석</strong></td>
+                <td>Ordinal 특화</td>
+            </tr>
+            <tr>
+                <td>Dataset</td>
+                <td>TULIP (12명) + PD4T (30명)</td>
+                <td><strong>PD4T 전체 + TULIP + YouTube</strong></td>
+                <td>데이터 확대</td>
+            </tr>
+            <tr>
+                <td>QA Dataset</td>
+                <td>없음</td>
+                <td><strong>~17,000 QA pairs</strong></td>
+                <td>완전 신규</td>
+            </tr>
+            <tr>
+                <td>XAI</td>
+                <td>Grad-CAM, Feature Importance</td>
+                <td><strong>+ VLM Reasoning 분석</strong></td>
+                <td>언어 기반 설명</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>올해 핵심 연구 질문 (Research Questions)</h3>
+        <table>
+            <tr>
+                <th>RQ</th>
+                <th>질문</th>
+                <th>작년 답</th>
+                <th>올해 기대</th>
+            </tr>
+            <tr>
+                <td><strong>RQ1</strong></td>
+                <td>최신 VLM이 UPDRS 점수를 맞출 수 있는가?</td>
+                <td>Gait O, Finger X</td>
+                <td>GPT-4o/Gemini로 재검증</td>
+            </tr>
+            <tr>
+                <td><strong>RQ2</strong></td>
+                <td>어떤 Input strategy가 가장 효과적인가?</td>
+                <td>미검증</td>
+                <td>4개 전략 체계적 비교</td>
+            </tr>
+            <tr>
+                <td><strong>RQ3</strong></td>
+                <td>Few-shot/RAG가 Zero-shot보다 나은가?</td>
+                <td>미검증</td>
+                <td>3단계 적응 비교</td>
+            </tr>
+            <tr>
+                <td><strong>RQ4</strong></td>
+                <td>VLM vs ML/DL, 어느 쪽이 나은가?</td>
+                <td>ML > VLM (Finger), VLM > DL (Gait)</td>
+                <td>4개 task 종합 비교</td>
+            </tr>
+            <tr>
+                <td><strong>RQ5</strong></td>
+                <td>QA 학습 데이터가 VLM 성능을 개선하는가?</td>
+                <td>미검증</td>
+                <td>LoRA fine-tuning 탐색</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>팀 역할 (올해)</h3>
+        <table>
+            <tr>
+                <th>이름</th>
+                <th>역할</th>
+                <th>작년 담당</th>
+                <th>올해 담당</th>
+            </tr>
+            <tr>
+                <td><strong>영권</strong></td>
+                <td>Team Lead / 임상</td>
+                <td>임상 기반 연구 디자인</td>
+                <td>QA dataset 설계, MotorExam, 논문 총괄</td>
+            </tr>
+            <tr>
+                <td><strong>영빈</strong></td>
+                <td>DS Lead</td>
+                <td>UPDRS 비디오 기반 AI 모델링 리드</td>
+                <td>Open-source VLM (Qwen3-VL), 파이프라인</td>
+            </tr>
+            <tr>
+                <td><strong>대현</strong></td>
+                <td>DS</td>
+                <td>데이터 전처리, AI 모델링</td>
+                <td>Skeleton 추출/검증, Strategy B</td>
+            </tr>
+            <tr>
+                <td><strong>연주</strong></td>
+                <td>DS</td>
+                <td>ML 모델링, 피처엔지니어링</td>
+                <td>Commercial VLM (GPT-4o, Gemini)</td>
+            </tr>
+            <tr>
+                <td><strong>동성</strong></td>
+                <td>임상</td>
+                <td>운동 특징 정의, VLM 프롬프트 설계</td>
+                <td>UPDRS 라벨링, L5 시나리오 검수</td>
+            </tr>
+            <tr>
+                <td><strong>례미</strong></td>
+                <td>정신과 교수</td>
+                <td>서브프로젝트(ODD) 총괄</td>
+                <td>영상 수집, 레퍼런스</td>
+            </tr>
+            <tr>
+                <td><strong>두연</strong></td>
+                <td>정보화실</td>
+                <td>의무기록 자문, 서브프로젝트</td>
+                <td>영상 수집/다운로드, 데이터 관리</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- Section 12: Re-check -->
+<div class="section" id="s12">
+    <div class="section-header">
+        <div class="section-num">12</div>
+        <h2>PD4T Skeleton 재검증 (대현 담당)</h2>
+    </div>
+
+    <div class="highlight-danger">
+        <strong>영권 코멘트:</strong> "pd4t는 내가 AI 도움받아서 skeleton 돌린 결과 있어. 이건 다시 한번 re-check (대현쌤이 해야해)"
+    </div>
+
+    <div class="card">
+        <h3>재검증 대상 파일</h3>
+        <table>
+            <tr>
+                <th>파일</th>
+                <th>크기</th>
+                <th>내용</th>
+                <th>확인 사항</th>
+            </tr>
+            <tr>
+                <td>finger_tapping_*_features_stratified.csv</td>
+                <td>268+56+62 KB</td>
+                <td>32 columns (amplitude, velocity, rhythm...)</td>
+                <td>Feature 계산 정확성</td>
+            </tr>
+            <tr>
+                <td>gait_*_features_stratified.csv</td>
+                <td>235+50+53 KB</td>
+                <td>45 columns (arm swing, cadence, stride...)</td>
+                <td>Feature 계산 정확성</td>
+            </tr>
+            <tr>
+                <td>hand_movement_train/test.pkl</td>
+                <td>43+9.5 MB</td>
+                <td>Raw skeleton sequences</td>
+                <td>Skeleton 추출 품질</td>
+            </tr>
+            <tr>
+                <td>leg_agility_train/test_v2.pkl</td>
+                <td>11+2.4 MB</td>
+                <td>Raw skeleton sequences</td>
+                <td>Skeleton 추출 품질</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>대현 체크리스트</h3>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>항목</th>
+                <th>방법</th>
+                <th>기준</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>MediaPipe 랜드마크 추출 정확도</td>
+                <td>10-20개 영상 수동 확인 (overlay 시각화)</td>
+                <td>관절 위치 정확히 추적되는지</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Kinematic feature 계산 검증</td>
+                <td>수동 계산 vs 스크립트 비교 (3-5개 샘플)</td>
+                <td>amplitude, velocity, rhythm 일치 여부</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>결측치 처리 확인</td>
+                <td>NaN, 0값 비율 확인</td>
+                <td>결측률 5% 이하</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Failed videos 원인 분석</td>
+                <td>27개 실패 영상 확인</td>
+                <td>조명/가림/화질 문제 분류</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>전처리 파이프라인 확인</td>
+                <td>Butterworth/Kalman filter 적용 여부</td>
+                <td>작년 발표와 동일 전처리인지</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Feature 분포 이상 확인</td>
+                <td>기초 통계 (mean, std, min, max)</td>
+                <td>물리적으로 가능한 범위인지</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>현재 Skeleton Feature 현황</h3>
+        <div class="grid-2">
+            <div>
+                <h4>Finger Tapping Features (32개)</h4>
+                <ul style="font-size:0.85em;">
+                    <li>tapping_speed, total_taps</li>
+                    <li>amplitude_mean, amplitude_std, amplitude_decrement</li>
+                    <li>opening_velocity_mean, closing_velocity_mean, peak_velocity_mean</li>
+                    <li>rhythm_variability, hesitation_count, halt_count</li>
+                    <li>fatigue_rate, freeze_episodes</li>
+                    <li>velocity/amplitude 시간 구간별 (first/mid/last third)</li>
+                    <li>velocity_slope, amplitude_slope, rhythm_slope</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Gait Features (45개)</h4>
+                <ul style="font-size:0.85em;">
+                    <li>arm_swing_amplitude (L/R), arm_swing_asymmetry</li>
+                    <li>walking_speed, cadence, step_height_mean</li>
+                    <li>stride_length, stride_variability</li>
+                    <li>swing_time, stance_time, swing_stance_ratio</li>
+                    <li>trunk_flexion, hip/knee/ankle ROM (L/R)</li>
+                    <li>step_length/cadence/arm_swing trend (first/second half)</li>
+                    <li>variability_trend, step_height_trend</li>
+                </ul>
+            </div>
+        </div>
+        <div class="highlight-warn" style="margin-top:10px;">
+            <strong>Hand Movement, Leg Agility feature CSV는 아직 없음</strong><br>
+            pkl 파일(raw skeleton)만 존재 → Feature 추출 스크립트 필요 (대현 or 영빈)
+        </div>
+    </div>
+</div>
+
+<!-- Section 13: Action Items -->
+<div class="section" id="s13">
+    <div class="section-header">
+        <div class="section-num">13</div>
+        <h2>2월 Action Items</h2>
+    </div>
+
+    <div class="card">
+        <h3>2월 체크리스트 (담당자별)</h3>
+        <table>
+            <tr>
+                <th>항목</th>
+                <th>상태</th>
+                <th>담당</th>
+                <th>기한</th>
+                <th>비고</th>
+            </tr>
+            <tr style="background:#f0fff4;">
+                <td>PD4T EDA (Score, Duration, 해상도)</td>
+                <td><span class="tag tag-green">완료</span></td>
+                <td>영권</td>
+                <td>-</td>
+                <td>이 문서</td>
+            </tr>
+            <tr style="background:#f0fff4;">
+                <td>TULIP 정보 조사</td>
+                <td><span class="tag tag-green">완료</span></td>
+                <td>영권</td>
+                <td>-</td>
+                <td>CVPR 2024, IRB 필요</td>
+            </tr>
+            <tr style="background:#f0fff4;">
+                <td>작년 실험 결과 정리</td>
+                <td><span class="tag tag-green">완료</span></td>
+                <td>영권</td>
+                <td>-</td>
+                <td>이 문서 Section 10</td>
+            </tr>
+            <tr>
+                <td><strong>PD4T Skeleton 재검증</strong></td>
+                <td><span class="tag tag-orange">TODO</span></td>
+                <td><strong>대현</strong></td>
+                <td>2/21</td>
+                <td>6개 항목 체크리스트 (Section 12)</td>
+            </tr>
+            <tr>
+                <td><strong>VLM 파일럿 (GPT-4o/Gemini)</strong></td>
+                <td><span class="tag tag-orange">TODO</span></td>
+                <td><strong>연주</strong></td>
+                <td>2/14</td>
+                <td>PD4T 5-10개 영상 테스트</td>
+            </tr>
+            <tr>
+                <td><strong>VLM 파일럿 (Qwen3-VL)</strong></td>
+                <td><span class="tag tag-orange">TODO</span></td>
+                <td><strong>영빈</strong></td>
+                <td>2/21</td>
+                <td>작년 Qwen2.5 vs 올해 Qwen3 비교</td>
+            </tr>
+            <tr>
+                <td><strong>QA 문항 형식 확정 (L1,L3,L4,L6)</strong></td>
+                <td><span class="tag tag-orange">TODO</span></td>
+                <td><strong>영권+동성</strong></td>
+                <td>2/21</td>
+                <td>레벨별 샘플 5개씩</td>
+            </tr>
+            <tr>
+                <td>YouTube PD 영상 사전 조사</td>
+                <td><span class="tag tag-orange">TODO</span></td>
+                <td>례미+두연</td>
+                <td>2/28</td>
+                <td>검색 키워드, 후보 URL 리스트</td>
+            </tr>
+            <tr>
+                <td>TULIP 추가 데이터 접근 확인</td>
+                <td><span class="tag tag-orange">TODO</span></td>
+                <td>영권</td>
+                <td>2/28</td>
+                <td>이미 보유 데이터로 충분한지 확인</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="highlight">
+        <strong>2월 우선순위 Top 3:</strong><br><br>
+        <ol>
+            <li><strong>VLM 파일럿 테스트 (연주+영빈)</strong> — PD4T 영상을 GPT-4o/Gemini/Qwen3-VL에 넣어보기<br>
+                → 작년 ChatGPT 80.5% (Gait)를 최신 모델로 재현 + 개선 가능한지 확인<br>
+                → 작년 Qwen 11% (Finger)가 Qwen3-VL로 얼마나 개선되는지 확인</li>
+            <li><strong>PD4T Skeleton 재검증 (대현)</strong> — Feature 정확도 확인<br>
+                → 올해 Strategy D (Kinematic text) 실험의 기반<br>
+                → Hand Movement/Leg Agility feature 추출도 필요</li>
+            <li><strong>QA 문항 형식 확정 (영권+동성)</strong> — L1, L3, L4, L6 각 샘플 5개<br>
+                → 팀 전체가 "이런 걸 만드는 거구나" 이해해야 3월 본격 생성 가능</li>
+        </ol>
+    </div>
+</div>
+
+</div>
+
+<div class="footer">
+    <p><strong>EDA: PD4T + TULIP Datasets</strong> — Hawkeye / MotorExam Benchmark</p>
+    <p>Generated: 2026-02-09 | Data: PD4T Stratified Split (no leakage)</p>
+</div>
+
+</body>
+</html>

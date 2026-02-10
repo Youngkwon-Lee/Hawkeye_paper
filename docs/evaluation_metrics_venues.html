@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluation Metrics & Target Venues — Hawkeye VLM Project</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    background: #fff; color: #1a1a1a;
+    line-height: 1.7; padding: 48px 64px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  h1 { font-size: 28px; font-weight: 700; color: #111; margin-bottom: 4px; }
+  .subtitle { font-size: 15px; color: #666; margin-bottom: 8px; }
+  .meta { font-size: 13px; color: #888; margin-bottom: 36px; padding-bottom: 16px; border-bottom: 2px solid #111; }
+  h2 {
+    font-size: 20px; font-weight: 700; margin: 44px 0 16px 0; color: #111;
+    padding-bottom: 6px; border-bottom: 2px solid #e0e0e0;
+  }
+  h3 { font-size: 16px; font-weight: 600; margin: 28px 0 10px 0; color: #222; }
+  h4 { font-size: 14px; font-weight: 600; margin: 18px 0 8px 0; color: #333; }
+  p { font-size: 14px; color: #333; margin: 8px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px 0; font-size: 13px; }
+  thead th {
+    background: #f5f5f5; border: 1px solid #ddd; padding: 10px 12px;
+    text-align: left; font-weight: 600; color: #333;
+  }
+  tbody td { border: 1px solid #ddd; padding: 9px 12px; vertical-align: top; }
+  tbody tr:hover { background: #fafafa; }
+  .section { margin-bottom: 44px; page-break-inside: avoid; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin: 1px 2px; }
+  .tag-green { background: #e8f5e9; color: #2e7d32; }
+  .tag-red { background: #ffebee; color: #c62828; }
+  .tag-blue { background: #e3f2fd; color: #1565c0; }
+  .tag-orange { background: #fff3e0; color: #e65100; }
+  .tag-purple { background: #f3e5f5; color: #7b1fa2; }
+  .tag-gray { background: #f5f5f5; color: #616161; }
+  .box {
+    padding: 16px 20px; margin: 14px 0; border-radius: 0 6px 6px 0;
+  }
+  .box-blue { background: #f0f7ff; border-left: 4px solid #1976d2; }
+  .box-green { background: #f0faf0; border-left: 4px solid #43a047; }
+  .box-yellow { background: #fffde7; border-left: 4px solid #f9a825; }
+  .box-red { background: #fff5f5; border-left: 4px solid #e53935; }
+  .box-purple { background: #faf0ff; border-left: 4px solid #8e24aa; }
+  .card-grid { display: grid; gap: 14px; margin: 14px 0; }
+  .card-grid-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card {
+    border: 1px solid #e0e0e0; border-radius: 8px; padding: 18px; background: #fafafa;
+  }
+  .card h4 { margin-top: 0; }
+  ul, ol { margin: 6px 0 6px 24px; font-size: 14px; }
+  li { margin: 3px 0; }
+  .badge {
+    display: inline-block; background: #1976d2; color: white;
+    padding: 3px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;
+  }
+  .badge-green { background: #43a047; }
+  .badge-orange { background: #e65100; }
+  .badge-red { background: #c62828; }
+  .primary { background: #e3f2fd; font-weight: 600; }
+  .secondary { background: #f5f5f5; }
+  .highlight-row { background: #e8f5e9 !important; }
+  .qwk-visual {
+    display: flex; gap: 8px; align-items: center; margin: 8px 0;
+    font-size: 13px; font-family: monospace;
+  }
+  .qwk-cell {
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    border-radius: 6px; font-weight: 700; font-size: 13px; color: white;
+  }
+  .penalty-0 { background: #43a047; }
+  .penalty-1 { background: #7cb342; }
+  .penalty-4 { background: #f9a825; }
+  .penalty-9 { background: #e65100; }
+  .penalty-16 { background: #c62828; }
+  .scale-bar {
+    display: flex; height: 32px; border-radius: 6px; overflow: hidden; margin: 8px 0; font-size: 11px;
+  }
+  .scale-bar div {
+    display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;
+  }
+  .venue-card {
+    border: 2px solid #e0e0e0; border-radius: 10px; padding: 20px; background: #fafafa;
+    position: relative;
+  }
+  .venue-card.recommended { border-color: #43a047; background: #f0faf0; }
+  .venue-card.ideal { border-color: #1976d2; background: #f0f7ff; }
+  .venue-rank {
+    position: absolute; top: -12px; left: 16px; background: #111; color: white;
+    padding: 2px 12px; border-radius: 10px; font-size: 12px; font-weight: 700;
+  }
+  .venue-card.recommended .venue-rank { background: #43a047; }
+  .venue-card.ideal .venue-rank { background: #1976d2; }
+  .toc { background: #f8f9fa; padding: 20px 28px; border-radius: 8px; margin-bottom: 36px; }
+  .toc a { color: #1976d2; text-decoration: none; font-size: 14px; }
+  .toc a:hover { text-decoration: underline; }
+  .toc ol { margin-left: 20px; }
+  .toc li { margin: 4px 0; }
+  @media print {
+    body { padding: 24px; }
+    .section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Evaluation Metrics & Target Venues</h1>
+<p class="subtitle">Hawkeye VLM Project &mdash; Paper 4: VLM for PD Motor Assessment + MotorExam Benchmark</p>
+<p class="meta">Last updated: 2026-02-09 &nbsp;|&nbsp; Status: Planning &nbsp;|&nbsp; Team Lead: YK</p>
+
+<div class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#metrics-overview">Evaluation Metrics Overview</a></li>
+    <li><a href="#qwk">QWK (Quadratic Weighted Kappa) Explained</a></li>
+    <li><a href="#domain-standards">Domain-Specific Metric Standards</a></li>
+    <li><a href="#our-metrics">Our Metric System (Recommended)</a></li>
+    <li><a href="#motorexam-metrics">MotorExam Benchmark Metrics by Level</a></li>
+    <li><a href="#venues">Target Venues</a></li>
+    <li><a href="#strategy">Submission Strategy</a></li>
+  </ol>
+</div>
+
+<!-- ===== SECTION 1: Metrics Overview ===== -->
+<div class="section" id="metrics-overview">
+<h2>1. Evaluation Metrics Overview</h2>
+
+<p>UPDRS scoring (0-4 ordinal)은 일반적인 classification도 regression도 아닌 <strong>ordinal regression</strong> 문제입니다. 따라서 도메인별 표준 지표를 이해하고 적절히 조합해야 합니다.</p>
+
+<table>
+  <thead>
+    <tr><th>Metric</th><th>Full Name</th><th>Type</th><th>Range</th><th>Higher=Better?</th><th>Best For</th></tr>
+  </thead>
+  <tbody>
+    <tr class="primary">
+      <td><strong>Spearman &rho;</strong></td><td>Spearman Rank Correlation</td><td>Correlation</td><td>-1 ~ 1</td><td>Yes</td><td>Ordinal ranking (AQA standard)</td>
+    </tr>
+    <tr class="primary">
+      <td><strong>QWK</strong></td><td>Quadratic Weighted Kappa</td><td>Agreement</td><td>-1 ~ 1</td><td>Yes</td><td>Inter-rater reliability (Clinical standard)</td>
+    </tr>
+    <tr>
+      <td>Pearson r</td><td>Pearson Correlation</td><td>Correlation</td><td>-1 ~ 1</td><td>Yes</td><td>Linear relationship</td>
+    </tr>
+    <tr>
+      <td>MAE</td><td>Mean Absolute Error</td><td>Error</td><td>0 ~ 4</td><td>No (lower)</td><td>Average prediction error</td>
+    </tr>
+    <tr>
+      <td><strong>MA-MAE</strong></td><td>Macro-Averaged MAE</td><td>Error</td><td>0 ~ 4</td><td>No (lower)</td><td>Class-balanced error (imbalanced data)</td>
+    </tr>
+    <tr>
+      <td>Exact Acc</td><td>Exact Accuracy</td><td>Accuracy</td><td>0 ~ 100%</td><td>Yes</td><td>Exact match rate</td>
+    </tr>
+    <tr>
+      <td>OBO Acc</td><td>Off-by-One Accuracy</td><td>Accuracy</td><td>0 ~ 100%</td><td>Yes</td><td>Clinical tolerance (&plusmn;1 point)</td>
+    </tr>
+    <tr>
+      <td>ICC</td><td>Intraclass Correlation</td><td>Reliability</td><td>0 ~ 1</td><td>Yes</td><td>Multi-rater consistency</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ===== SECTION 2: QWK Explained ===== -->
+<div class="section" id="qwk">
+<h2>2. QWK (Quadratic Weighted Kappa) &mdash; Intuitive Explanation</h2>
+
+<div class="box box-blue">
+  <strong>Definition:</strong> "두 평가자(VLM vs Expert)가 얼마나 일치하는지" 측정. 가까이 틀린 건 봐주고, 멀리 틀린 건 크게 벌점을 주는 방식.
+</div>
+
+<h3>Penalty Matrix (차이&sup2; = Quadratic)</h3>
+<p>실제 점수와 예측 점수의 차이에 따른 벌점:</p>
+
+<table style="max-width: 500px;">
+  <thead>
+    <tr><th></th><th>Pred 0</th><th>Pred 1</th><th>Pred 2</th><th>Pred 3</th><th>Pred 4</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>True 0</strong></td><td style="background:#e8f5e9;text-align:center">0</td><td style="background:#f1f8e9;text-align:center">1</td><td style="background:#fff9c4;text-align:center">4</td><td style="background:#ffe0b2;text-align:center">9</td><td style="background:#ffcdd2;text-align:center">16</td></tr>
+    <tr><td><strong>True 1</strong></td><td style="background:#f1f8e9;text-align:center">1</td><td style="background:#e8f5e9;text-align:center">0</td><td style="background:#f1f8e9;text-align:center">1</td><td style="background:#fff9c4;text-align:center">4</td><td style="background:#ffe0b2;text-align:center">9</td></tr>
+    <tr><td><strong>True 2</strong></td><td style="background:#fff9c4;text-align:center">4</td><td style="background:#f1f8e9;text-align:center">1</td><td style="background:#e8f5e9;text-align:center">0</td><td style="background:#f1f8e9;text-align:center">1</td><td style="background:#fff9c4;text-align:center">4</td></tr>
+    <tr><td><strong>True 3</strong></td><td style="background:#ffe0b2;text-align:center">9</td><td style="background:#fff9c4;text-align:center">4</td><td style="background:#f1f8e9;text-align:center">1</td><td style="background:#e8f5e9;text-align:center">0</td><td style="background:#f1f8e9;text-align:center">1</td></tr>
+    <tr><td><strong>True 4</strong></td><td style="background:#ffcdd2;text-align:center">16</td><td style="background:#ffe0b2;text-align:center">9</td><td style="background:#fff9c4;text-align:center">4</td><td style="background:#f1f8e9;text-align:center">1</td><td style="background:#e8f5e9;text-align:center">0</td></tr>
+  </tbody>
+</table>
+
+<h3>Why QWK over Accuracy?</h3>
+<div class="card-grid card-grid-2">
+  <div class="card">
+    <h4>Accuracy (Exact Match)</h4>
+    <p style="font-family:monospace;font-size:13px;">
+      True=2, Pred=3 &rarr; <span class="tag tag-red">WRONG (0 points)</span><br>
+      True=2, Pred=0 &rarr; <span class="tag tag-red">WRONG (0 points)</span><br>
+      &rarr; 1점 차이와 2점 차이를 동일하게 취급!
+    </p>
+  </div>
+  <div class="card" style="border-color:#43a047;">
+    <h4>QWK (Quadratic Weighted)</h4>
+    <p style="font-family:monospace;font-size:13px;">
+      True=2, Pred=3 &rarr; <span class="tag tag-green">Penalty 1 (경미)</span><br>
+      True=2, Pred=0 &rarr; <span class="tag tag-orange">Penalty 4 (심각)</span><br>
+      &rarr; 임상적 심각도에 비례하는 벌점!
+    </p>
+  </div>
+</div>
+
+<h3>QWK Interpretation Scale</h3>
+<div class="scale-bar">
+  <div style="width:10%;background:#c62828;">&lt;0</div>
+  <div style="width:15%;background:#e65100;">0-0.2</div>
+  <div style="width:15%;background:#f9a825;color:#333;">0.2-0.4</div>
+  <div style="width:20%;background:#7cb342;">0.4-0.6</div>
+  <div style="width:20%;background:#43a047;">0.6-0.8</div>
+  <div style="width:20%;background:#2e7d32;">0.8-1.0</div>
+</div>
+<table style="max-width: 600px;">
+  <thead><tr><th>QWK Range</th><th>Interpretation</th><th>Reference</th></tr></thead>
+  <tbody>
+    <tr><td>&lt; 0.20</td><td>거의 일치 안 함</td><td>Random guess</td></tr>
+    <tr><td>0.21 - 0.40</td><td>약한 일치 (Fair)</td><td></td></tr>
+    <tr><td>0.41 - 0.60</td><td>보통 일치 (Moderate)</td><td>VLM zero-shot 목표</td></tr>
+    <tr style="background:#e8f5e9"><td><strong>0.61 - 0.80</strong></td><td><strong>상당한 일치 (Substantial)</strong></td><td><strong>MDS-UPDRS 의사 간 수준</strong></td></tr>
+    <tr><td>0.81 - 1.00</td><td>거의 완벽 (Excellent)</td><td>Training set CORAL</td></tr>
+  </tbody>
+</table>
+
+<div class="box box-green">
+  <strong>임상 맥락:</strong> MDS-UPDRS 의사 간 QWK가 보통 0.6-0.8. VLM이 <strong>0.4+</strong> 나오면 "의미 있다", <strong>0.6+</strong> 나오면 "임상 수준에 근접"이라는 스토리.
+</div>
+
+<h3>QWK Formula</h3>
+<div class="box box-purple" style="font-family:monospace;font-size:13px;">
+  QWK = 1 - (&Sigma; w<sub>ij</sub> &times; O<sub>ij</sub>) / (&Sigma; w<sub>ij</sub> &times; E<sub>ij</sub>)<br><br>
+  w<sub>ij</sub> = (i - j)&sup2; / (K - 1)&sup2; &nbsp;&nbsp; (weight matrix, K=5 classes)<br>
+  O<sub>ij</sub> = observed confusion matrix<br>
+  E<sub>ij</sub> = expected (random chance) confusion matrix<br><br>
+  &rarr; O가 E보다 좋으면 QWK &gt; 0 (찍기보다 나음)<br>
+  &rarr; 완벽 일치이면 QWK = 1
+</div>
+</div>
+
+<!-- ===== SECTION 3: Domain Standards ===== -->
+<div class="section" id="domain-standards">
+<h2>3. Domain-Specific Metric Standards</h2>
+
+<table>
+  <thead>
+    <tr><th>Domain</th><th>Primary Metric</th><th>Standard In</th><th>Papers Using It</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>AQA</strong> (Action Quality Assessment)</td>
+      <td><span class="badge">Spearman &rho;</span></td>
+      <td>CoRe, TSA, MUSDL, MCoRe</td>
+      <td>56/96 papers (58%)</td>
+    </tr>
+    <tr>
+      <td><strong>MDS-UPDRS Clinical</strong></td>
+      <td><span class="badge badge-green">ICC / QWK</span></td>
+      <td>MDS official, clinical trials</td>
+      <td>Gold standard for inter-rater</td>
+    </tr>
+    <tr>
+      <td><strong>VLM Benchmarks</strong> (Video-MME etc)</td>
+      <td><span class="badge badge-orange">Accuracy (MCQ)</span></td>
+      <td>Video-MME, MVBench, EgoSchema</td>
+      <td>Multiple choice format</td>
+    </tr>
+    <tr>
+      <td><strong>Ordinal Regression</strong></td>
+      <td><span class="badge">MA-MAE + Spearman</span></td>
+      <td>Medical ordinal, class-imbalanced</td>
+      <td>Recent best practice (2024+)</td>
+    </tr>
+    <tr>
+      <td><strong>Our Current Models</strong> (CORAL)</td>
+      <td><span class="tag tag-gray">Pearson + MAE + OBO</span></td>
+      <td>Hawkeye codebase</td>
+      <td>Needs Spearman/QWK addition</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box box-yellow">
+  <strong>Key Insight &mdash; MA-MAE vs MAE:</strong><br>
+  PD4T score distribution: Score 0 (~50), Score 1 (~60), Score 2 (~50), Score 3 (~30), <strong>Score 4 (~10)</strong><br>
+  Regular MAE: Score 4를 다 틀려도 MAE에 거의 영향 없음 (10/200 = 5%)<br>
+  <strong>MA-MAE</strong>: 클래스별 MAE를 구한 뒤 평균 &rarr; Score 4 성능이 동등하게 반영됨. 불균형 데이터에서 필수.
+</div>
+</div>
+
+<!-- ===== SECTION 4: Our Metric System ===== -->
+<div class="section" id="our-metrics">
+<h2>4. Our Metric System (Recommended)</h2>
+
+<h3>Metric Hierarchy</h3>
+<table>
+  <thead>
+    <tr><th>Priority</th><th>Metric</th><th>Where Used</th><th>Why</th></tr>
+  </thead>
+  <tbody>
+    <tr class="primary">
+      <td><span class="badge">PRIMARY</span></td>
+      <td><strong>Spearman &rho;</strong></td>
+      <td>Title, Abstract, Key Results</td>
+      <td>AQA 커뮤니티 표준, ordinal에 최적</td>
+    </tr>
+    <tr class="primary">
+      <td><span class="badge">PRIMARY</span></td>
+      <td><strong>QWK</strong></td>
+      <td>Title, Abstract, Key Results</td>
+      <td>임상 커뮤니티 표준, inter-rater reliability</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-orange">SECONDARY</span></td>
+      <td>MAE</td>
+      <td>Result Tables</td>
+      <td>직관적 해석 ("평균 0.5점 차이")</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-orange">SECONDARY</span></td>
+      <td>MA-MAE</td>
+      <td>Result Tables</td>
+      <td>불균형 클래스 보정 (Score 3-4 공정 평가)</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-orange">SECONDARY</span></td>
+      <td>Exact Acc / OBO Acc</td>
+      <td>Result Tables</td>
+      <td>직관적 정확도 + 임상 허용 범위</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-gray">LEGACY</span></td>
+      <td>Pearson r</td>
+      <td>Baseline Comparison</td>
+      <td>기존 CORAL 모델 결과와 호환</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Paper Tables Structure</h3>
+
+<div class="card-grid card-grid-3">
+  <div class="card">
+    <h4>Table 1: VLM Scoring (E1-E6)</h4>
+    <ul>
+      <li>Spearman &rho; <span class="tag tag-blue">Primary</span></li>
+      <li>QWK <span class="tag tag-blue">Primary</span></li>
+      <li>MAE</li>
+      <li>MA-MAE</li>
+      <li>Exact Acc</li>
+      <li>OBO (&plusmn;1) Acc</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Table 2: MotorExam (L1-L5)</h4>
+    <ul>
+      <li>L1: Spearman, QWK, MAE</li>
+      <li>L2: Accuracy, F1</li>
+      <li>L3: Accuracy, Cohen's &kappa;</li>
+      <li>L4: Expert Likert, BERTScore</li>
+      <li>L5: Accuracy, F1</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Table 3: Baseline Comparison</h4>
+    <ul>
+      <li>vs CORAL: Pearson, MAE</li>
+      <li>vs AQA (CoRe): Spearman</li>
+      <li>vs Human: QWK, ICC</li>
+    </ul>
+  </div>
+</div>
+
+<div class="box box-green">
+  <strong>Reviewer-Proof Strategy:</strong> Spearman으로 AQA 리뷰어, QWK로 임상 리뷰어, MA-MAE로 ML 리뷰어 모두 만족. "왜 이 지표를 안 썼느냐" 질문을 원천 차단.
+</div>
+</div>
+
+<!-- ===== SECTION 5: H1 vs H2 Metrics ===== -->
+<div class="section" id="motorexam-metrics">
+<h2>5. H1 vs H2 &mdash; Paper-Specific Metrics</h2>
+
+<div class="box box-yellow">
+  <strong>Decision (2026-02-09):</strong> H1은 UPDRS Scoring 평가만 집중. MotorExam 벤치마크(L2-L5)는 H2에서 SNUH 데이터와 합쳐서 더 강한 논문으로.
+</div>
+
+<h3>H1 Paper: VLM UPDRS Evaluation (Scoring Only)</h3>
+<table>
+  <thead>
+    <tr><th>Metric</th><th>Type</th><th>Role</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr class="primary">
+      <td><strong>Spearman &rho;</strong></td><td>Rank Correlation</td><td>Primary</td><td>AQA 표준, Title/Abstract에 보고</td>
+    </tr>
+    <tr class="primary">
+      <td><strong>QWK</strong></td><td>Inter-rater</td><td>Primary</td><td>임상 표준, "VLM vs Doctor" 비교</td>
+    </tr>
+    <tr>
+      <td>MAE</td><td>Error</td><td>Secondary</td><td>"평균 0.5점 차이" 직관적</td>
+    </tr>
+    <tr>
+      <td>MA-MAE</td><td>Balanced Error</td><td>Secondary</td><td>Score 3-4 소수 클래스 보정</td>
+    </tr>
+    <tr>
+      <td>Exact Acc</td><td>Accuracy</td><td>Secondary</td><td>정확히 맞춘 비율</td>
+    </tr>
+    <tr>
+      <td>OBO (&plusmn;1) Acc</td><td>Clinical Tolerance</td><td>Secondary</td><td>임상 허용 범위</td>
+    </tr>
+    <tr>
+      <td>Pearson r</td><td>Linear Correlation</td><td>Legacy</td><td>기존 CORAL baseline 비교용</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>H2 Paper: MotorExam Benchmark + SNUH (L1-L5 전체)</h3>
+<table>
+  <thead>
+    <tr><th>Level</th><th>Task Type</th><th>Primary Metric</th><th>Secondary</th><th>Data Source</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>L1 Scoring</strong></td>
+      <td>UPDRS 0-4</td>
+      <td>Spearman, QWK</td>
+      <td>MAE, MA-MAE, Acc</td>
+      <td>PD4T + TULIP + SNUH</td>
+    </tr>
+    <tr>
+      <td><strong>L2 Observation</strong></td>
+      <td>임상 관찰 Yes/No</td>
+      <td>Accuracy, F1</td>
+      <td>Precision, Recall</td>
+      <td>수동 제작 (H2)</td>
+    </tr>
+    <tr>
+      <td><strong>L3 Comparison</strong></td>
+      <td>쌍 비교 A vs B</td>
+      <td>Accuracy, Cohen's &kappa;</td>
+      <td>Calibration</td>
+      <td>수동 제작 (H2)</td>
+    </tr>
+    <tr>
+      <td><strong>L4 Reasoning</strong></td>
+      <td>임상 추론 설명</td>
+      <td>Expert Likert (1-5)</td>
+      <td>BERTScore</td>
+      <td>전문가 작성 (H2)</td>
+    </tr>
+    <tr>
+      <td><strong>L5 Differential</strong></td>
+      <td>감별 MCQ</td>
+      <td>Accuracy, F1</td>
+      <td>Confusion Matrix</td>
+      <td>SNUH 다양한 증례</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>L4 Reasoning: Expert Evaluation Rubric (H2 Reference)</h3>
+<table style="max-width:700px;">
+  <thead><tr><th>Criterion</th><th>1 (Poor)</th><th>3 (Adequate)</th><th>5 (Excellent)</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Clinical Accuracy</strong></td>
+      <td>Factually wrong observations</td>
+      <td>Mostly correct, minor errors</td>
+      <td>All observations clinically accurate</td>
+    </tr>
+    <tr>
+      <td><strong>Completeness</strong></td>
+      <td>Misses key features</td>
+      <td>Covers main features</td>
+      <td>Comprehensive, nothing missed</td>
+    </tr>
+    <tr>
+      <td><strong>Reasoning Validity</strong></td>
+      <td>Illogical or hallucinated</td>
+      <td>Reasonable but shallow</td>
+      <td>Mirrors expert clinical reasoning</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ===== SECTION 6: Target Venues ===== -->
+<div class="section" id="venues">
+<h2>6. Target Venues &mdash; H1 / H2 Split</h2>
+
+<h3>6.1 H1: VLM UPDRS Evaluation (UPDRS Scoring Only, 4-5월 투고)</h3>
+<p>벤치마크 없이 순수 평가 논문 &rarr; <strong>의료/임상 저널이 더 유리</strong></p>
+
+<div class="card-grid" style="grid-template-columns:1fr;gap:18px;">
+  <div class="venue-card recommended">
+    <div class="venue-rank">H1 - 1st Choice</div>
+    <h4 style="margin-top:8px;">npj Digital Medicine <span class="tag tag-green">IF 15.1</span> <span class="tag tag-blue">Open Access</span></h4>
+    <table style="margin:8px 0;">
+      <tbody>
+        <tr><td style="width:120px;font-weight:600;">Impact Factor</td><td>15.1 (Q1)</td></tr>
+        <tr><td style="font-weight:600;">Review Speed</td><td><strong>7 days to 1st decision</strong>, ~15 weeks total</td></tr>
+        <tr><td style="font-weight:600;">Recent PD Papers</td><td>FastEval Parkinsonism (2024), AI webcam PD (2023)</td></tr>
+        <tr><td style="font-weight:600;">Why Best</td><td>PD video 논문 다수, 빠른 리뷰, 기술 평가 논문 환영</td></tr>
+        <tr><td style="font-weight:600;">Submit</td><td>4-5월 &rarr; 5-6월 1차 결정</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="venue-card">
+    <div class="venue-rank">H1 - 2nd Choice</div>
+    <h4 style="margin-top:8px;">JAMA Network Open <span class="tag tag-green">IF 13.8</span> <span class="tag tag-purple">AI vs Doctor</span></h4>
+    <table style="margin:8px 0;">
+      <tbody>
+        <tr><td style="width:120px;font-weight:600;">Impact Factor</td><td>13.8 (Q1)</td></tr>
+        <tr><td style="font-weight:600;">Why Good Fit</td><td>"VLM vs 신경과 전문의" = JAMA가 좋아하는 AI vs Human 포맷</td></tr>
+        <tr><td style="font-weight:600;">Precedent</td><td>GPT-4 vs Doctor 류 논문 2024-2025 대량 게재</td></tr>
+        <tr><td style="font-weight:600;">Framing</td><td>"Can VLMs match neurologists in UPDRS scoring?"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="venue-card">
+    <div class="venue-rank">H1 - 3rd Choice</div>
+    <h4 style="margin-top:8px;">IEEE TNSRE <span class="tag tag-green">IF 6.2</span> <span class="tag tag-gray">Fallback</span></h4>
+    <table style="margin:8px 0;">
+      <tbody>
+        <tr><td style="width:120px;font-weight:600;">Impact Factor</td><td>6.22 (Q1)</td></tr>
+        <tr><td style="font-weight:600;">Review Speed</td><td>~2-3 months</td></tr>
+        <tr><td style="font-weight:600;">Why Fallback</td><td>npj/JAMA reject 시 즉시 전환. PD ML 논문 다수</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="box box-blue">
+  <strong>H1 Ideal (도전):</strong> <strong>Lancet Digital Health</strong> (IF 24.1) &mdash; "VLM이 의사 수준에 도달했는가?" 질문이면 가능. 리뷰 느림 (~6개월).
+</div>
+
+<h3>6.2 H2: MotorExam Benchmark + SNUH + Fine-tuning (10-12월 투고)</h3>
+<p>SNUH 30명 + MotorExam L1-L5 벤치마크 &rarr; <strong>벤치마크 학회 + 임상 저널 모두 가능</strong></p>
+
+<div class="card-grid" style="grid-template-columns:1fr;gap:18px;">
+  <div class="venue-card recommended">
+    <div class="venue-rank">H2-A: Benchmark Paper</div>
+    <h4 style="margin-top:8px;">MotorExam Benchmark + Dataset</h4>
+    <table style="margin:8px 0;">
+      <tbody>
+        <tr><td style="width:120px;font-weight:600;">Realistic</td><td><strong>Scientific Data</strong> (IF 5.8, Nature 계열) &mdash; 데이터셋 전문 저널</td></tr>
+        <tr><td style="font-weight:600;">Ideal</td><td><strong>NeurIPS D&B 2027</strong> &mdash; CARE-PD 전례, MotorExam+SNUH 합체</td></tr>
+        <tr><td style="font-weight:600;">Content</td><td>PD4T+TULIP+SNUH 기반 L1-L5 벤치마크, VLM baseline 포함</td></tr>
+        <tr><td style="font-weight:600;">Advantage</td><td>SNUH 데이터 포함 &rarr; 벤치마크 규모/가치 대폭 상승</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="venue-card">
+    <div class="venue-rank">H2-B: Fine-tuning + Clinical Paper</div>
+    <h4 style="margin-top:8px;">DoRA Fine-tuning + Clinical Validation</h4>
+    <table style="margin:8px 0;">
+      <tbody>
+        <tr><td style="width:120px;font-weight:600;">Realistic</td><td><strong>Movement Disorders</strong> (IF 7.6) &mdash; 임상 데이터 있으면 강력</td></tr>
+        <tr><td style="font-weight:600;">Ideal</td><td><strong>Lancet Digital Health</strong> (IF 24.1) &mdash; SNUH 실제 환자 + VLM</td></tr>
+        <tr><td style="font-weight:600;">Content</td><td>DoRA fine-tuning, SNUH 30명 validation, VLM vs 신경과 전문의</td></tr>
+        <tr><td style="font-weight:600;">Advantage</td><td>실제 임상 데이터 = 임상 저널에서 강한 무기</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<h3>6.3 Full Comparison (Updated)</h3>
+
+<table>
+  <thead>
+    <tr><th>Venue</th><th>Domain</th><th>IF</th><th>Review</th><th>H1 Fit</th><th>H2 Fit</th></tr>
+  </thead>
+  <tbody>
+    <tr class="highlight-row">
+      <td><strong>npj Digital Medicine</strong></td><td>Healthcare</td><td>15.1</td><td>7d / 15w</td><td><span class="tag tag-green">Best</span></td><td><span class="tag tag-blue">Good</span></td>
+    </tr>
+    <tr>
+      <td><strong>JAMA Network Open</strong></td><td>Medical</td><td>13.8</td><td>~3 months</td><td><span class="tag tag-green">Strong</span></td><td><span class="tag tag-gray">Less Fit</span></td>
+    </tr>
+    <tr>
+      <td><strong>IEEE TNSRE</strong></td><td>Rehab/Eng</td><td>6.2</td><td>2-3 months</td><td><span class="tag tag-blue">Fallback</span></td><td><span class="tag tag-blue">Good</span></td>
+    </tr>
+    <tr>
+      <td><strong>Lancet Digital Health</strong></td><td>Digital Health</td><td>24.1</td><td>~6 months</td><td><span class="tag tag-orange">Stretch</span></td><td><span class="tag tag-green">Strong</span></td>
+    </tr>
+    <tr>
+      <td><strong>Movement Disorders</strong></td><td>Neurology</td><td>7.6</td><td>3-6 months</td><td><span class="tag tag-gray">No</span></td><td><span class="tag tag-green">Strong</span></td>
+    </tr>
+    <tr>
+      <td><strong>NeurIPS D&B</strong></td><td>CS/AI</td><td>Top</td><td>3 months</td><td><span class="tag tag-gray">No (no benchmark)</span></td><td><span class="tag tag-green">Best</span></td>
+    </tr>
+    <tr>
+      <td><strong>Scientific Data</strong></td><td>Data</td><td>5.8</td><td>~3 months</td><td><span class="tag tag-gray">No</span></td><td><span class="tag tag-green">Strong</span></td>
+    </tr>
+    <tr>
+      <td>Nature Medicine</td><td>Clinical</td><td>53.4</td><td>Varies</td><td><span class="tag tag-orange">Stretch</span></td><td><span class="tag tag-orange">Stretch</span></td>
+    </tr>
+    <tr>
+      <td>MICCAI</td><td>Medical AI</td><td>Top</td><td>3.5 months</td><td><span class="tag tag-blue">Good</span></td><td><span class="tag tag-blue">Good</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ===== SECTION 7: Submission Strategy ===== -->
+<div class="section" id="strategy">
+<h2>7. Submission Strategy &mdash; Revised Roadmap</h2>
+
+<div class="box box-green">
+  <strong>Core Decision:</strong> H1 = UPDRS Scoring만 (빠르게 4-5월 투고). MotorExam 벤치마크는 H2에서 SNUH 데이터와 합쳐서 더 강한 논문으로.
+</div>
+
+<h3>H1: VLM UPDRS Evaluation (Fast Track)</h3>
+
+<div class="card-grid card-grid-2">
+  <div class="card" style="border-color:#43a047;border-width:2px;">
+    <h4>Track A: Safe &mdash; npj Digital Medicine</h4>
+    <ul>
+      <li>IF 15.1, 리뷰 7일 내 1차 결정</li>
+      <li>FastEval PD 게재 전례 &rarr; 에디터 관심</li>
+      <li>Reject 시 &rarr; IEEE TNSRE로 즉시 전환</li>
+      <li><strong>4-5월 투고 &rarr; 5-6월 결정</strong></li>
+    </ul>
+  </div>
+  <div class="card" style="border-color:#1976d2;border-width:2px;">
+    <h4>Track B: Ambitious &mdash; JAMA Network Open</h4>
+    <ul>
+      <li>IF 13.8, "AI vs Doctor" 프레이밍</li>
+      <li>GPT-4 vs Doctor 류 논문 다수 게재</li>
+      <li>"Can VLMs match neurologists?"</li>
+      <li><strong>5월 투고 &rarr; 8월 결정</strong></li>
+    </ul>
+  </div>
+</div>
+
+<h3>H2: Two Papers (Benchmark + Clinical)</h3>
+
+<div class="card-grid card-grid-2">
+  <div class="card" style="border-color:#8e24aa;border-width:2px;">
+    <h4>H2-A: MotorExam Benchmark + SNUH Dataset</h4>
+    <ul>
+      <li>PD4T + TULIP + SNUH 30명 합체</li>
+      <li>L1-L5 전체 벤치마크 구축</li>
+      <li>Realistic: Scientific Data (IF 5.8)</li>
+      <li>Ideal: NeurIPS D&B 2027</li>
+      <li><strong>12월 투고 or 2027.5월 (NeurIPS)</strong></li>
+    </ul>
+  </div>
+  <div class="card" style="border-color:#e65100;border-width:2px;">
+    <h4>H2-B: Fine-tuning + Clinical Validation</h4>
+    <ul>
+      <li>SNUH 30명 + DoRA fine-tuning</li>
+      <li>VLM vs 신경과 전문의 비교</li>
+      <li>Realistic: Movement Disorders (IF 7.6)</li>
+      <li>Ideal: Lancet Digital Health (IF 24.1)</li>
+      <li><strong>11-12월 투고</strong></li>
+    </ul>
+  </div>
+</div>
+
+<h3>Full Roadmap</h3>
+<div class="box box-purple" style="font-family:monospace;font-size:12px;line-height:2;">
+2026<br>
+&nbsp;Feb&nbsp;&nbsp;Mar&nbsp;&nbsp;Apr&nbsp;&nbsp;May&nbsp;&nbsp;Jun&nbsp;&nbsp;Jul&nbsp;&nbsp;Aug&nbsp;&nbsp;Sep&nbsp;&nbsp;Oct&nbsp;&nbsp;Nov&nbsp;&nbsp;Dec<br>
+&nbsp;&nbsp;|----|----|----|----|----|----|----|----|----|----|<br>
+<br>
+<strong>H1: VLM UPDRS Evaluation</strong><br>
+&nbsp;&nbsp;[==Experiment==][Analysis][Write]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&rarr; npj Digital Med (4-5월) &rarr; Decision (5-6월)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&rarr; JAMA Network Open (5월) &rarr; Decision (8월)<br>
+<br>
+<strong>H2-A: MotorExam Benchmark + SNUH</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[IRB]&nbsp;&nbsp;[===Data Collection===][QA Build===][Write====]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&rarr; Scientific Data (Dec) or NeurIPS D&B 2027 (May)<br>
+<br>
+<strong>H2-B: Fine-tuning + Clinical</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[===Collection===][DoRA][Analysis][Write====]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&rarr; Lancet DH or Mov Disord (Nov-Dec)<br>
+</div>
+
+<h3>Paper-Venue Mapping (Final)</h3>
+<table>
+  <thead><tr><th>Paper</th><th>Content</th><th>Realistic</th><th>Ideal</th><th>Submit</th></tr></thead>
+  <tbody>
+    <tr class="highlight-row">
+      <td><strong>H1: VLM UPDRS</strong></td>
+      <td>VLM Scoring Evaluation (UPDRS only)</td>
+      <td><strong>npj Digital Med</strong> (IF 15.1)</td>
+      <td>JAMA Network Open (IF 13.8)</td>
+      <td>Apr-May 2026</td>
+    </tr>
+    <tr>
+      <td><strong>H2-A: Benchmark</strong></td>
+      <td>MotorExam L1-L5 + SNUH Dataset</td>
+      <td>Scientific Data (IF 5.8)</td>
+      <td><strong>NeurIPS D&B 2027</strong></td>
+      <td>Dec 2026</td>
+    </tr>
+    <tr>
+      <td><strong>H2-B: Clinical</strong></td>
+      <td>DoRA Fine-tuning + SNUH Validation</td>
+      <td>Movement Disorders (IF 7.6)</td>
+      <td><strong>Lancet Digital Health</strong> (IF 24.1)</td>
+      <td>Nov-Dec 2026</td>
+    </tr>
+    <tr>
+      <td>Parallel: Skeleton</td>
+      <td>Cross-dataset Skeleton</td>
+      <td>IEEE TNSRE (IF 6.2)</td>
+      <td>MICCAI</td>
+      <td>Parallel</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box box-green">
+  <strong>Key Advantage of Split:</strong><br>
+  &bull; H1이 1-2개월 빨라짐 (벤치마크 제작 시간 절약)<br>
+  &bull; MotorExam에 SNUH 데이터 포함 &rarr; 벤치마크 규모/가치 UP<br>
+  &bull; 3편 논문이 각각 독립적 contribution (평가 / 벤치마크 / 임상)<br>
+  &bull; H1 논문이 H2 벤치마크의 pilot study로 인용됨 &rarr; 시너지
+</div>
+</div>
+
+<hr style="margin:40px 0;border:none;border-top:1px solid #e0e0e0;">
+<p style="font-size:12px;color:#999;text-align:center;">
+  Hawkeye VLM Project &mdash; Evaluation Metrics & Target Venues Reference<br>
+  Generated 2026-02-09 | For internal team use
+</p>
+
+</body>
+</html>
