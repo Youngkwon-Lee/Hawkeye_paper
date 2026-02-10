@@ -3,6 +3,40 @@
 > Google Drive 공유 폴더 데이터셋 카탈로그
 > 최종 업데이트: 2026-02-10
 
+## Drive 폴더 구조
+
+```
+PT_dataset/
+├── 1_disease_specific/       ← 질환 특이적 (5개)
+│   ├── 1_PD4T/
+│   ├── 1_TULIP/
+│   ├── 1_care_pd/
+│   ├── 1_REMAP/
+│   └── 1_WearGait-PD/
+├── 2_rehabilitation/         ← 재활 (10개)
+│   ├── 2_Clinical_Gait_Signals/
+│   ├── 2_FineRehab/
+│   ├── 2_IntelliRehabDS/
+│   ├── 2_keraal/
+│   ├── 2_KIMORE/
+│   ├── 2_KINECAL/
+│   ├── 2_REHAB24-6/
+│   ├── 2_UCO_physical_Rehabilitation/
+│   ├── 2_UI-PRMD/
+│   └── 2_UL-RED/
+├── 3_action_recognition/     ← 일반 동작 (4개)
+│   ├── 3_Kinetics-700/
+│   ├── 3_NTU_RGB+D/
+│   ├── 3_PKU-MMD/
+│   └── 3_ROSE_DATASET/
+├── _project/                 ← 프로젝트 관리
+│   ├── docs/
+│   ├── reference/
+│   └── 연구/
+├── _legacy/
+└── dataset_catalog.md
+```
+
 ## 분류 기준
 
 | 접두사 | 카테고리 | 설명 |
