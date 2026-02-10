@@ -96,11 +96,11 @@ PT_dataset/
 - **Drive 상태**: ⬜ 빈 폴더 (Synapse에서 다운로드 필요)
 - **비고**: 웨어러블 보행 센서 데이터, 비디오 아님
 
-### 1_parkinson ⬜
-- **논문**: 미확인 (Kaggle 등에서 수집 추정)
+### 1_parkinson ⬜ (작업 폴더)
 - **질환**: Parkinson's Disease
 - **크기**: ~4.9GB
 - **Drive 상태**: ⬜ 빈 폴더 (D:\에서 업로드 필요)
+- **비고**: PD4T 또는 TULIP 관련 작업 폴더 (별도 연구용). 독립 데이터셋이 아닌 파생 폴더일 가능성
 
 ### 1_UDysRS ⬜
 - **논문**: Goetz et al., Movement Disorders, 2008
@@ -191,25 +191,34 @@ PT_dataset/
 - **데이터**: Wearable sensor (건강인)
 - **Drive 상태**: ✅ dataset.zip
 
-### 2_lateralstepdown ⬜
-- **도메인**: 측면 스텝다운 운동 (무릎 재활)
+### 2_lateralstepdown ⬜ (자체 연구 데이터)
+- **논문**: 이영권, "The Relationship Between Hip Abductor and Pelvic Drop During Lateral Step Down in the Elderly", Physical Therapy Korea (PTK), 2022
+- **DOI**: 10.12674/ptk.2022.29.4.249
+- **도메인**: 노인 측면 스텝다운 시 고관절 외전근-골반 하강 관계
 - **크기**: ~6.8GB
 - **Drive 상태**: ⬜ 빈 폴더 (D:\에서 업로드 필요)
+- **비고**: 팀장(영권) 자체 연구 데이터, 비공개
 
 ### 2_gait_wearable_sensor ⬜
-- **도메인**: 보행 웨어러블 센서
+- **추정 출처**: Voisard et al., Nature Scientific Data 2025 또는 유사 보행 센서 데이터셋
+- **도메인**: 보행 웨어러블 센서 (IMU, 가속도계)
 - **크기**: ~9.7GB (9,979 files)
 - **Drive 상태**: ⬜ 빈 폴더 (D:\에서 업로드 필요, 대용량 주의)
+- **비고**: D:\ 내부 README 확인 필요
 
 ### 2_IMU_dataset ⬜
-- **도메인**: IMU 센서 기반 운동 데이터
+- **추정 출처**: PHYTMO (García-de-Villa et al., Sci Data 2022) 또는 UCI Physical Therapy Exercises (Yurtman & Barshan, 2014)
+- **도메인**: IMU 센서 기반 물리치료 운동 데이터
 - **크기**: 356MB
 - **Drive 상태**: ⬜ 빈 폴더 (D:\에서 업로드 필요)
+- **비고**: D:\ 내부 README 확인 필요
 
 ### 2_EMG_RGB ⬜
-- **도메인**: EMG + RGB 멀티모달
+- **추정 출처**: EV-Action (Wang et al., IEEE FG 2020) — Electromyography-Vision Multi-Modal Action Dataset
+- **도메인**: EMG + RGB 멀티모달 동작 인식
 - **크기**: 4MB
 - **Drive 상태**: ⬜ 빈 폴더 (D:\에서 업로드 필요)
+- **비고**: D:\ 내부 README 확인 필요, 크기가 작아 메타데이터만 있을 가능성
 
 ---
 
