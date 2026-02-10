@@ -200,25 +200,30 @@ PT_dataset/
 - **비고**: 팀장(영권) 자체 연구 데이터, 비공개
 
 ### 2_gait_wearable_sensor ⬜
-- **추정 출처**: Voisard et al., Nature Scientific Data 2025 또는 유사 보행 센서 데이터셋
-- **도메인**: 보행 웨어러블 센서 (IMU, 가속도계)
-- **크기**: ~9.7GB (9,979 files)
+- **논문**: Voisard et al., "Clinical Gait Signals", Nature Scientific Data, 2025
+- **도메인**: 보행 웨어러블 센서 (IMU 4개: 양발 + 양쪽 허리)
+- **피험자**: 179명 (건강인 + OA + PD + CVA), 800+ trials
+- **데이터**: Accelerometer + Gyroscope raw signals (CSV), 4 IMU sensors per trial
+- **질환**: 다질환 분류 (Osteoarthritis, Parkinson's, Cerebrovascular Accident, Healthy)
+- **크기**: ~9.7GB (gait_analysis.tar.gz 2.18GB + ML project files)
 - **Drive 상태**: ⬜ 빈 폴더 (D:\에서 업로드 필요, 대용량 주의)
-- **비고**: D:\ 내부 README 확인 필요
+- **비고**: D:\에 전체 ML 프로젝트 존재 (scripts, models, results, visualizations). "Multi-Stream Attention CNN for Disease Classification" 구현 포함
 
 ### 2_IMU_dataset ⬜
-- **추정 출처**: PHYTMO (García-de-Villa et al., Sci Data 2022) 또는 UCI Physical Therapy Exercises (Yurtman & Barshan, 2014)
-- **도메인**: IMU 센서 기반 물리치료 운동 데이터
+- **추정 출처**: 미확인 (D:\ 내 README 없음, 출처 추적 필요)
+- **도메인**: IMU 센서 기반 보행 분석 (Walking + Standing)
+- **피험자**: 35명 (SUB01-SUB35)
+- **데이터**: CSV/TXT 파일, Walking trials (다수) + Standing recordings, 2021-2022년 수집
 - **크기**: 356MB
 - **Drive 상태**: ⬜ 빈 폴더 (D:\에서 업로드 필요)
-- **비고**: D:\ 내부 README 확인 필요
+- **비고**: 정확한 출처 미확인. 폴더 구조: `IMU/SUB{01-35}/walking_*.csv, standing_*.txt`
 
 ### 2_EMG_RGB ⬜
-- **추정 출처**: EV-Action (Wang et al., IEEE FG 2020) — Electromyography-Vision Multi-Modal Action Dataset
-- **도메인**: EMG + RGB 멀티모달 동작 인식
-- **크기**: 4MB
+- **추정 출처**: 해당 없음 (실제 데이터 없음, 참고 논문 2편만 존재)
+- **도메인**: EMG + RGB 멀티모달 동작 인식 (참고 자료)
+- **크기**: 4MB (PDF 2개만)
 - **Drive 상태**: ⬜ 빈 폴더 (D:\에서 업로드 필요)
-- **비고**: D:\ 내부 README 확인 필요, 크기가 작아 메타데이터만 있을 가능성
+- **비고**: D:\에 실제 데이터 없음. `2303.00952v5.pdf` + `preprint-55246-accepted.pdf` 논문 파일 2개만 있음. 독립 데이터셋이 아닌 참고 문헌 폴더
 
 ---
 
