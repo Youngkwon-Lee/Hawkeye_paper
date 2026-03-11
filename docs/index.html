@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hawkeye Paper - VLM-based UPDRS Assessment</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2b6cb0;
+            --success: #38a169;
+            --danger: #e53e3e;
+            --warning: #d69e2e;
+            --bg: #f7fafc;
+            --card: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+
+        .hero {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 50%, #718096 100%);
+            color: white; padding: 60px 40px; text-align: center;
+        }
+        .hero h1 { font-size: 2.8em; font-weight: 800; margin-bottom: 12px; }
+        .hero .sub { font-size: 1.3em; opacity: 0.9; }
+
+        .container {
+            max-width: 1000px; margin: 0 auto; padding: 40px 20px;
+        }
+
+        .nav-section {
+            margin: 40px 0;
+        }
+        .nav-section h2 {
+            color: var(--primary); font-size: 1.6em; margin-bottom: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 10px;
+        }
+
+        .nav-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;
+        }
+
+        .nav-card {
+            background: var(--card); padding: 25px; border-radius: 8px; border-left: 4px solid var(--primary-light);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.3s ease;
+        }
+        .nav-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-2px);
+        }
+        .nav-card h3 {
+            color: var(--primary); margin-bottom: 10px; font-size: 1.2em;
+        }
+        .nav-card p {
+            color: var(--text-light); margin-bottom: 15px; font-size: 0.95em;
+        }
+        .nav-card a {
+            display: inline-block; padding: 10px 20px; background: var(--primary-light);
+            color: white; text-decoration: none; border-radius: 4px; transition: background 0.3s;
+        }
+        .nav-card a:hover {
+            background: var(--primary);
+        }
+
+        .footer {
+            text-align: center; padding: 30px 20px; background: var(--card);
+            border-top: 1px solid var(--border); margin-top: 60px; color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🔬 Hawkeye Paper</h1>
+        <div class="sub">VLM-based Automated MDS-UPDRS Motor Assessment for Parkinson's Disease</div>
+    </div>
+
+    <div class="container">
+        <div class="nav-section">
+            <h2>📊 데이터 분석</h2>
+            <div class="nav-grid">
+                <div class="nav-card">
+                    <h3>📈 EDA Report</h3>
+                    <p>PD4T & TULIP 데이터셋의 탐색적 데이터 분석</p>
+                    <a href="eda_datasets.html">자세히 보기 →</a>
+                </div>
+                <div class="nav-card">
+                    <h3>📋 데이터셋 카탈로그</h3>
+                    <p>PD4T, TULIP 데이터셋 구조 및 메타데이터</p>
+                    <a href="dataset_catalog.html" style="background: #ccc; cursor: not-allowed;">준비 중</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h2>🎯 평가 및 논문</h2>
+            <div class="nav-grid">
+                <div class="nav-card">
+                    <h3>📊 평가 지표 & 학회</h3>
+                    <p>모델 평가 메트릭 및 투고 대상 학회 선정</p>
+                    <a href="evaluation_metrics_venues.html">자세히 보기 →</a>
+                </div>
+                <div class="nav-card">
+                    <h3>🔍 VLM 연구 계획</h3>
+                    <p>VLM 기반 UPDRS 자동 평가 시스템 설계</p>
+                    <a href="paper4_vlm_plan.html">자세히 보기 →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h2>📚 문헌 및 기술</h2>
+            <div class="nav-grid">
+                <div class="nav-card">
+                    <h3>📖 문헌 리뷰</h3>
+                    <p>PD 평가, VLM, 스켈레톤 기반 분석 논문 조사</p>
+                    <a href="literature_review.html">자세히 보기 →</a>
+                </div>
+                <div class="nav-card">
+                    <h3>🎬 VLM 비디오 스펙</h3>
+                    <p>각 VLM API의 비디오 입력 형식 비교</p>
+                    <a href="vlm_video_specs.html">자세히 보기 →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2026 Hawkeye Project | VLM-based Medical AI Assessment System</p>
+    </div>
+</body>
+</html>
