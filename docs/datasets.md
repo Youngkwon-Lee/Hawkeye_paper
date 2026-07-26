@@ -9,7 +9,7 @@
 
 | Property | Value |
 |----------|-------|
-| Subjects | 50 PD patients |
+| Subjects | 35 unique PD patients (30 per task) |
 | Tasks | 4 (Finger Tapping, Gait, Hand Movement, Leg Agility) |
 | Total videos | 2,932 |
 | Score range | UPDRS 0-4 |
