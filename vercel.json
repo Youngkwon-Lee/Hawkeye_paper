@@ -1,7 +1,6 @@
 {
-  "buildCommand": "echo 'Static files only'",
+  "buildCommand": "",
   "outputDirectory": "docs",
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "installCommand": "",
+  "framework": null
 }
