@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Hawkeye - Literature Review & Differentiation Analysis</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -73,7 +74,7 @@
 
 <h1>선행연구 분석 및 차별화 전략</h1>
 <p class="subtitle">AI 기반 파킨슨병 운동 평가: 4가지 표현 접근법</p>
-<p class="authors">Hawkeye 연구팀 | 최종 수정: 2026-02-09</p>
+<p class="authors">Hawkeye 연구팀 | 최종 검토: 2026-07-27</p>
 
 <div class="summary-grid">
   <div class="summary-card" style="border-color: #1976d2;">
@@ -93,8 +94,8 @@
     <div class="label">VFM 논문 (이진분류만)</div>
   </div>
   <div class="summary-card" style="border-color: #43a047;">
-    <div class="number" style="color: #43a047;">0</div>
-    <div class="label">VLM 논문 (UPDRS)</div>
+    <div class="number" style="color: #43a047;">Scope</div>
+    <div class="label">VLM+UPDRS 검색 주장 관리</div>
   </div>
 </div>
 
@@ -138,7 +139,7 @@
 
 <h3>1.2 연구 격차 분석</h3>
 <div class="gap-box">
-  <strong>핵심 격차: 보행 외 태스크 크로스 데이터셋 평가 = 0편</strong>
+  <strong>핵심 격차 후보:</strong> 보행 외 태스크의 크로스 데이터셋 평가는 검색 범위 내에서 제한적으로 확인된다. “0편”으로 확정하기 전에는 데이터베이스·검색식·검색일을 공개하고 갱신한다.
   <ul>
     <li>CARE-PD는 <strong>유일한</strong> 크로스 데이터셋 연구이나, <strong>보행(Gait)만</strong> 다룸</li>
     <li>Finger Tapping, Hand Movement, Leg Agility: <strong>크로스 데이터셋 연구 전무</strong></li>
@@ -163,7 +164,7 @@
 
 <div class="highlight-box">
   <strong>RGB CNN (전통):</strong> I3D, C3D, SlowFast 등. 소규모 단일 기관 데이터 의존.
-  <br><strong>VFM:</strong> VideoMAE, V-JEPA, VideoPrism, TimeSformer. <strong>PD 이진 분류 1편(arXiv:2602.13507), UPDRS 0-4 채점은 0편.</strong>
+  <br><strong>VFM:</strong> VideoMAE, V-JEPA, VideoPrism, TimeSformer. PD 이진분류와 운동 정량 연구는 계속 증가하고 있으므로, “없음” 주장은 데이터베이스·검색식·검색일·포함 기준을 붙인 범위 한정 문장으로만 사용한다.
 </div>
 
 <table>
@@ -175,7 +176,7 @@
       <td><strong>PECoP</strong> (WACV 2024)</td><td>2024</td><td>I3D + 3D-Adapter</td><td>4 Tasks</td><td>PD4T</td><td>Benchmark</td>
     </tr>
     <tr>
-      <td><strong>VFM PD Screening</strong> (arXiv:2602.13507)</td><td>2026</td><td>VideoPrism, V-JEPA, TimeSformer</td><td>이진분류</td><td>1,888명 / 32,847 videos</td><td><strong>UPDRS 채점 0편</strong></td>
+      <td><strong>VFM PD Screening</strong> (arXiv:2602.13507)</td><td>2026</td><td>VideoPrism, V-JEPA, TimeSformer</td><td>이진분류</td><td>1,888명 / 32,847 videos</td><td>UPDRS 순서형 채점과는 과제 정의가 다름</td>
     </tr>
   </tbody>
 </table>
@@ -186,19 +187,32 @@
 <h2>4. VLM 접근법 (비전-언어 모델)</h2>
 
 <div class="highlight-box">
-  <strong>연구량: PD 운동 UPDRS 채점 0편</strong> (2026.02 기준, 세계 최초 연구 기회)
-  <br><strong>활용 모델:</strong> Gemini 2.5 Pro (네이티브 비디오), GPT-4.1, Qwen3-VL-8B (오픈소스).
-  <br><strong>핵심 장점:</strong> 임상 근거 설명 생성 가능 (기존 black-box 모델과 차별화).
+  <strong>연구 기회:</strong> MDS-UPDRS 순서형 채점·시간 근거·외부 검증을 한 프로토콜에서 함께 평가하는 연구는 제한적이다. 2026-07 검토에서는 “전 세계 최초”를 주장하지 않고, 검색 범위와 후속 업데이트를 공개한다.
+  <br><strong>핵심 방향:</strong> native-video, frame, pose/kinematic 보조 입력을 같은 split에서 비교한다.
+  <br><strong>핵심 장점과 한계:</strong> VLM은 자연어 근거를 만들 수 있으나, 그 근거가 실제 동작 구간 및 MDS-UPDRS rubric에 맞는지는 별도 임상 검수가 필요하다.
 </div>
 
 <div class="novelty-box">
-  <strong>기존 논문 0편 = 완전한 퍼스트무버 우위</strong>
+  <strong>차별화는 주장보다 검증 설계에서 나온다.</strong>
   <ul>
-    <li><strong>임상 추론:</strong> VLM은 점수 부여 이유를 <em>자연어로 설명</em> 가능</li>
-    <li><strong>멀티태스크:</strong> 동일 모델로 4개 태스크를 재학습 없이 처리</li>
-    <li><strong>임상 수용성:</strong> 설명 가능한 AI는 의료 도입에 핵심</li>
+    <li><strong>시간 근거:</strong> 점수와 함께 evidence timestamp를 출력하고 임상의가 블라인드 검수</li>
+    <li><strong>멀티모달:</strong> RGB, frame, pose/kinematic 경로의 공정한 ablation</li>
+    <li><strong>일반화:</strong> 피험자 분리, 외부 데이터, 영상 품질·시점 strata 및 abstention 보고</li>
   </ul>
 </div>
+</div>
+
+<div class="section">
+<h2>4.1 2026 업데이트: 비디오 VLM 연구 트렌드</h2>
+<table>
+  <thead><tr><th>트렌드</th><th>Hawkeye 반영</th><th>대표 근거</th></tr></thead>
+  <tbody>
+    <tr><td>몇 프레임만 보는 shortcut을 피하는 temporal evaluation</td><td>native video와 uniform-frame 기준선을 분리하고, frame index와 시간 근거를 기록</td><td><a href="https://aclanthology.org/2025.emnlp-main.1415/">GLIMPSE (EMNLP 2025)</a></td></tr>
+    <tr><td>coarse-to-fine evidence retrieval 및 tool-use</td><td>전체 영상을 한 번에 단정하지 않고 후보 구간을 찾은 뒤 evidence timestamp를 검수</td><td><a href="https://arxiv.org/abs/2602.13332">MedScope (2026)</a></td></tr>
+    <tr><td>미세 동작 정량의 한계</td><td>Finger Tapping 등에 pose/kinematic 기준선과 quality-gated abstention을 포함</td><td><a href="https://pubmed.ncbi.nlm.nih.gov/42406872/">Stroke rehabilitation VLM study (2026)</a></td></tr>
+    <tr><td>영상 품질을 모델 입력 전 평가</td><td>시점·가림·해상도·인물 수·동작 구간을 기록하고 불충분 clip은 보류</td><td><a href="https://www.mdpi.com/2409-9279/8/4/71">EVGS video quality assessment (2025)</a></td></tr>
+  </tbody>
+</table>
 </div>
 
 <!-- Section 5: Comparative Gap Matrix -->
@@ -211,11 +225,11 @@
     <tr><th>차원</th><th>Skeleton (2D/3D)</th><th>SMPL (3D Mesh)</th><th>RGB Video</th><th>VLM</th></tr>
   </thead>
   <tbody>
-    <tr><td><strong>논문 수</strong></td><td>25편 이상</td><td>약 5편</td><td>20편 이상</td><td><strong>0편</strong></td></tr>
+    <tr><td><strong>논문 수</strong></td><td>다수</td><td>제한적</td><td>다수</td><td><strong>빠르게 변화; 검색식 관리 필요</strong></td></tr>
     <tr><td><strong>단일 데이터셋</strong></td><td><span class="tag tag-red">포화</span></td><td><span class="tag tag-orange">부상</span></td><td><span class="tag tag-red">포화</span></td><td><span class="tag tag-green">미개척</span></td></tr>
-    <tr><td><strong>크로스 데이터셋</strong></td><td>1편 (Gait만)</td><td>1편 (CARE-PD)</td><td><strong>0편</strong></td><td><strong>0편</strong></td></tr>
-    <tr><td><strong>멀티 태스크</strong></td><td>2-3편</td><td>0편</td><td>1편 (PD4T)</td><td><strong>0편</strong></td></tr>
-    <tr><td><strong>파운데이션 모델</strong></td><td>N/A</td><td>N/A</td><td><strong>0편</strong></td><td><strong>0편</strong></td></tr>
+    <tr><td><strong>크로스 데이터셋</strong></td><td>보행 중심의 제한적 보고</td><td>CARE-PD 등</td><td>검증 설계가 핵심</td><td>동일한 외부 검증 프로토콜 필요</td></tr>
+    <tr><td><strong>멀티 태스크</strong></td><td>태스크별 편차 큼</td><td>제한적</td><td>재현 가능 비교 필요</td><td>4태스크 평가 후보</td></tr>
+    <tr><td><strong>파운데이션 모델</strong></td><td>N/A</td><td>N/A</td><td>모델·데이터 규모 의존</td><td>정적 모델명 대신 execution pinning</td></tr>
     <tr><td><strong>설명 가능성</strong></td><td>특징 중요도</td><td>특징 중요도</td><td>Grad-CAM</td><td><strong>자연어</strong></td></tr>
   </tbody>
 </table>
@@ -225,12 +239,12 @@
   <div class="novelty-meter">
     <span style="min-width:180px; font-weight:600;">Paper 4: VLM</span>
     <div class="meter-bar"><div class="meter-fill meter-high" style="width:95%"></div></div>
-    <span class="tag tag-green">Highest (0 papers)</span>
+    <span class="tag tag-green">High (evidence + validation)</span>
   </div>
   <div class="novelty-meter">
     <span style="min-width:180px; font-weight:600;">Paper 2: RGB Foundation</span>
     <div class="meter-bar"><div class="meter-fill meter-high" style="width:80%"></div></div>
-    <span class="tag tag-green">High (0 FM papers)</span>
+    <span class="tag tag-green">High (cross-dataset design)</span>
   </div>
   <div class="novelty-meter">
     <span style="min-width:180px; font-weight:600;">Paper 1: Skeleton Cross-DS</span>
@@ -272,7 +286,7 @@
       <td>비보행 태스크 3D 스켈레톤 크로스 데이터셋</td>
       <td>VFM (VideoMAE)의 UPDRS 채점 최초 적용</td>
       <td>다중 표현 벤치마크 (자체 데이터)</td>
-      <td>임상 추론 포함 최초 VLM UPDRS 채점</td>
+      <td>시간 근거·보류·외부 검증을 포함한 VLM UPDRS 평가</td>
     </tr>
     <tr>
       <td><strong>자체 데이터 필요?</strong></td>
@@ -290,10 +304,10 @@
     </tr>
     <tr>
       <td><strong>타임라인</strong></td>
-      <td>H1 2026</td>
-      <td>H1-H2 2026</td>
+      <td>2026 H2 gate-based</td>
+      <td>2026 H2 gate-based</td>
       <td>H2 2026</td>
-      <td>H1 2026</td>
+      <td>2026 H2 gate-based</td>
     </tr>
     <tr>
       <td><strong>참신성</strong></td>
@@ -313,19 +327,19 @@
 <div class="card-grid">
   <div class="card" style="border-left: 4px solid #43a047;">
     <h4>최대 기회</h4>
-    <p>UPDRS 채점을 위한 VLM = <strong>전 세계 0편</strong>. GPT-4o/Gemini는 API 호출 + PD4T 영상만으로 테스트 가능.</p>
+    <p>기회는 “최초” 표현이 아니라, 공개 가능한 검색 범위·고정 split·시간 근거·외부 검증을 묶는 데 있다.</p>
   </div>
   <div class="card" style="border-left: 4px solid #1976d2;">
     <h4>핵심 기술 격차</h4>
-    <p><strong>비보행 태스크</strong>의 크로스 데이터셋 일반화 = 0편. Finger Tapping, Hand Movement, Leg Agility 완전히 미탐색.</p>
+    <p><strong>비보행 태스크</strong>는 미세 동작·영상 품질·카메라 변화에 민감하므로 pose/kinematic 기준선과 오류 strata가 필요하다.</p>
   </div>
   <div class="card" style="border-left: 4px solid #e65100;">
     <h4>포화 영역 회피</h4>
-    <p>단일 데이터셋·단일 태스크 스켈레톤 분석 (2D + ML 분류기) = <strong>이미 25편 이상</strong>. 반복은 참신성 없음.</p>
+    <p>단일 데이터셋 성능만으로는 충분하지 않다. 피험자 분리·외부 검증·불확실성 보고가 연구 기여를 좌우한다.</p>
   </div>
   <div class="card" style="border-left: 4px solid #7b1fa2;">
     <h4>전략적 권고</h4>
-    <p>공개 데이터로 <strong>Paper 4 (VLM) + Paper 1 (스켈레톤 크로스 데이터셋)</strong> 병렬 시작. H1 2026 내 실현 가능.</p>
+    <p>공개 데이터의 <strong>VLM·frame·skeleton 기준선</strong>을 먼저 고정하고, 임상 데이터는 IRB·외부 검증 게이트 통과 후 확장한다.</p>
   </div>
 </div>
 </div>

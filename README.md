@@ -6,18 +6,20 @@ VLM-based Automated MDS-UPDRS Motor Assessment for Parkinson's Disease
 
 This repository contains experiment code, evaluation scripts, and documentation for the Hawkeye VLM research project. We evaluate Vision-Language Models (VLMs) on MDS-UPDRS Part III motor tasks using video-based assessment.
 
-**Research Gap**: No prior study has applied VLMs to PD motor scoring (MDS-UPDRS). This project addresses that gap.
+**Research focus**: MDS-UPDRS 순서형 채점에서 native video·frame·pose/kinematic 경로를 비교하고, 시간 근거와 외부 검증을 포함한 재현 가능한 평가를 만든다. “최초/없음” 주장은 검색식·검색일·포함 기준과 함께만 사용한다.
 
 **IRB**: SNUH 신청 완료 (승인 대기 중)
 
-## Research Pipeline (2/24 확정)
+## Research Pipeline (reviewed 2026-07-27)
 
 ```
-Teacher (Gemini 2.5 Pro / GPT-4.1) → Rationale 생성 → GT 검수 → Qwen3-VL-8B 학습 → Test
+Approved video/frame candidate → structured score + timestamp evidence → clinician review → local student candidate → locked test
 ```
 
-- **Exp A**: Qwen-VL + Rationale only → Test
-- **Exp B**: Qwen-VL + Rationale + Kinematic Features → Test
+- **V1**: approved native-video path → Test
+- **V2**: fixed frame-sequence path → Test
+- **V3**: local VLM + reviewed rationale + kinematic features → Test
+- **V4**: quality-gated abstention → coverage and selective error
 
 ## Repository Structure
 
@@ -58,35 +60,32 @@ Hawkeye_paper/
 |-----|--------|---------|
 | **Exp A** | Qwen3-VL + Teacher Rationale | Rationale distillation 효과 검증 |
 | **Exp B** | Qwen3-VL + Rationale + Kinematic Features | 멀티모달 입력 효과 검증 |
-| Baseline 1 | Gemini 2.5 Pro / GPT-4.1 Zero-shot | Teacher 성능 = upper bound |
+| Baseline 1 | Approved native-video / frame zero-shot paths | Commercial-path reference; not assumed upper bound |
 | Baseline 2 | CORAL Ordinal (기존 ML) | Traditional ML 비교 |
 | Ablation | FPS (1, 8, 15, 30) | 최적 temporal resolution |
 
 ## VLM Models
 
-### Teacher (Rationale Generation)
-| Model | Provider | Video Input | Context | Cost (Input/1M) |
-|-------|----------|-------------|---------|-----------------|
-| **Gemini 2.5 Pro** | Google | Native video (1fps) | 1M | $1.25 |
-| **GPT-4.1** | OpenAI | Frames only | 1M | $2.00 |
-| Gemini 3.1 Pro Preview | Google | Native video | 1M | $2.00 |
+### Teacher / commercial reference paths
+| Path | Input | Evaluation rule |
+|------|-------|-----------------|
+| Native-video candidate | approved video input | pin model ID, API version, file handling, cost, and call date for each run |
+| Frame-sequence candidate | 16/32 uniformly sampled images | store frame indices and report temporal-information loss |
 
 ### Student (Fine-tuning Target)
 | Model | Size | Video | Fine-tune | VRAM |
 |-------|------|-------|-----------|------|
 | **Qwen3-VL-8B** | 8B | Native | DoRA/DPO/GRPO | ~16GB |
 
-### Budget Options (Batch Processing)
-| Model | Cost/20s video | 260 videos |
-|-------|---------------|------------|
-| Gemini 2.5 Flash-Lite | $0.0007 | $0.18 |
-| Gemini 2.5 Flash | $0.003 | $0.78 |
-| GPT-4.1-mini | $0.009 | $2.34 |
+### Cost policy
+
+Do not treat static provider prices as durable facts. Report actual tokens, duration, latency, cost, model ID, region, and run date from a frozen input manifest.
 
 ## Evaluation Metrics
 
 - **Primary**: Spearman rho + QWK (Quadratic Weighted Kappa)
 - **Secondary**: MAE, MA-MAE, Exact Accuracy, OBO Accuracy
+- **Reliability/Safety**: subject-level bootstrap 95% CI, coverage/selective metrics after abstention, timestamp–rubric clinician review
 - **Legacy**: Pearson r (기존 CORAL baseline 호환)
 
 ## Target Venues
@@ -110,6 +109,8 @@ Hawkeye_paper/
 
 - **VFM PD Screening (arXiv:2602.13507)**: 1,888명, 32,847 videos, 16 tasks - VFM benchmark (binary PD/non-PD, NOT UPDRS scoring)
 - **MedScope (arXiv:2602.13332)**: Tool-using clinical video reasoning
+- **GLIMPSE (EMNLP 2025)**: benchmark for temporal, rather than key-frame-only, video reasoning
+- **Human motion VLM study (2026)**: fine-grained rehabilitation-motion quantification remains unreliable without task-specific safeguards
 - **CARE-PD (NeurIPS 2025)**: Cross-dataset PD (Gait only, SMPL)
 - **FLEX (2025)**: VLM for AQA, Qwen2.5-VL-3B
 

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Paper 4: VLM for PD — Rationale Distillation Plan</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -64,12 +65,12 @@
 
 <h1>Paper 4: VLM 기반 파킨슨 운동 평가 — Rationale Distillation</h1>
 <p class="subtitle">"Can VLMs Score Parkinson's? Distilling Clinical Rationale for Automated UPDRS Motor Assessment"</p>
-<p class="meta">Hawkeye 연구팀 | 목표: npj Digital Medicine (IF 15.1) / MLHC 2026 | 최종 수정: 2026-02-25</p>
+<p class="meta">Hawkeye 연구팀 | 연구용 의사결정 보조 후보 | 최종 수정: 2026-07-27</p>
 
 <div class="summary-grid">
   <div class="summary-card" style="border-color:#c62828;">
-    <div class="number" style="color:#c62828;">0</div>
-    <div class="label">VLM+PD UPDRS 선행 논문</div>
+    <div class="number" style="color:#c62828;">Scoped</div>
+    <div class="label">문헌 주장: 검색식·시점과 함께 보고</div>
   </div>
   <div class="summary-card" style="border-color:#1976d2;">
     <div class="number" style="color:#1976d2;">2</div>
@@ -87,24 +88,24 @@
 
 <!-- Section 1: 파이프라인 -->
 <div class="section">
-<h2>1. 연구 파이프라인 (2/24 확정)</h2>
+<h2>1. 연구 파이프라인 (2026-07 검토)</h2>
 
 <div class="box box-green">
-  <strong>핵심 전략: Teacher Rationale Distillation</strong> — Teacher VLM이 임상 근거(rationale)를 생성하고, Student VLM이 이를 학습해 UPDRS 채점 능력을 획득.
+  <strong>핵심 전략: 근거 중심 Rationale Distillation</strong> — Teacher VLM의 자유 서술을 정답으로 취급하지 않는다. 점수·confidence·근거 timestamp를 구조화하고, 임상의가 rubric 및 근거 구간을 검수한 항목만 student 학습 후보로 사용한다.
 </div>
 
 <div class="pipeline">
   <div class="pipe-step" style="background:#1976d2;">PD4T 비디오<br><small style="font-weight:400;">4 Tasks</small></div>
   <div class="pipe-arrow">→</div>
-  <div class="pipe-step" style="background:#7b1fa2;">Teacher<br><small style="font-weight:400;">Gemini 2.5 Pro<br>GPT-4.1</small></div>
+  <div class="pipe-step" style="background:#7b1fa2;">Teacher 후보<br><small style="font-weight:400;">승인된 video / frame 경로</small></div>
   <div class="pipe-arrow">→</div>
-  <div class="pipe-step" style="background:#e65100;">Clinical Rationale<br><small style="font-weight:400;">UPDRS 근거 + 점수</small></div>
+  <div class="pipe-step" style="background:#e65100;">Structured evidence<br><small style="font-weight:400;">점수 + timestamp + confidence</small></div>
   <div class="pipe-arrow">→</div>
   <div class="pipe-step" style="background:#c62828;">GT 검수<br><small style="font-weight:400;">영권 + 동성</small></div>
   <div class="pipe-arrow">→</div>
   <div class="pipe-step" style="background:#43a047;">Qwen3-VL-8B<br><small style="font-weight:400;">DoRA / DPO / GRPO</small></div>
   <div class="pipe-arrow">→</div>
-  <div class="pipe-step" style="background:#1a237e;">평가<br><small style="font-weight:400;">Spearman, QWK</small></div>
+  <div class="pipe-step" style="background:#1a237e;">평가<br><small style="font-weight:400;">QWK, CI, coverage</small></div>
 </div>
 </div>
 
@@ -120,8 +121,8 @@
     <tr style="background:#f5f5f5;">
       <td rowspan="2"><strong>Baseline</strong></td>
       <td>Baseline 1</td>
-      <td>Teacher Zero-shot (Gemini 2.5 Pro / GPT-4.1)</td>
-      <td>Upper bound — Teacher 자체 성능</td>
+      <td>승인된 native-video / frame 경로의 zero-shot</td>
+      <td>상용 경로 기준선; upper bound로 가정하지 않음</td>
     </tr>
     <tr style="background:#f5f5f5;">
       <td>Baseline 2</td>
@@ -145,6 +146,12 @@
       <td>1 / 8 / 15 / 30 fps</td>
       <td>최적 temporal resolution</td>
     </tr>
+    <tr style="background:#fff8e1;">
+      <td><strong>Safety</strong></td>
+      <td>Quality-gated abstention</td>
+      <td>시점·가림·동작 구간 품질을 기록하고 불충분 영상은 보류</td>
+      <td>강제 채점 대비 coverage와 selective error 검증</td>
+    </tr>
   </tbody>
 </table>
 </div>
@@ -162,6 +169,7 @@
     <tr><td><strong>RQ2</strong></td><td>Distillation이 zero-shot 대비 얼마나 성능을 향상시키는가?</td><td>Exp A vs Baseline 1</td></tr>
     <tr><td><strong>RQ3</strong></td><td>Kinematic features 추가(Exp B)가 rationale-only(Exp A) 대비 효과가 있는가?</td><td>Exp B vs Exp A</td></tr>
     <tr><td><strong>RQ4</strong></td><td>오픈소스 Qwen이 distillation으로 상용 VLM 수준에 근접할 수 있는가?</td><td>Exp A/B vs Baseline 1</td></tr>
+    <tr><td><strong>RQ5</strong></td><td>근거 timestamp 검수와 품질 보류가 오류를 줄이고 해석 가능성을 높이는가?</td><td>V1–V4, blinded clinician review</td></tr>
   </tbody>
 </table>
 </div>
@@ -176,8 +184,8 @@
     <table style="margin:0;">
       <thead><tr><th>순위</th><th>모델</th><th>이유</th></tr></thead>
       <tbody>
-        <tr><td><span class="tag tag-green">1순위</span></td><td><strong>Gemini 2.5 Pro</strong></td><td>네이티브 비디오, temporal 이해, $0.012/비디오</td></tr>
-        <tr><td><span class="tag tag-blue">2순위</span></td><td><strong>GPT-4.1</strong></td><td>Video-MME 72%, 30fps 가능, $0.039/비디오</td></tr>
+        <tr><td><span class="tag tag-green">A</span></td><td><strong>Native-video candidate</strong></td><td>실행 당일 model ID·파일 처리·가격·데이터 조건을 공식 문서와 run log로 고정</td></tr>
+        <tr><td><span class="tag tag-blue">B</span></td><td><strong>Frame-sequence candidate</strong></td><td>16/32 uniform frame 기준선; 시간 손실과 샘플링 인덱스를 보고</td></tr>
       </tbody>
     </table>
   </div>
@@ -207,6 +215,9 @@
     <tr style="background:#e3f2fd;"><td><span class="badge">PRIMARY</span></td><td><strong>QWK</strong></td><td>임상 표준 — 의사 간 신뢰도와 직접 비교 가능</td></tr>
     <tr><td><span class="tag tag-orange">SECONDARY</span></td><td>MAE / MA-MAE</td><td>직관적 오차 + 클래스 불균형 보정</td></tr>
     <tr><td><span class="tag tag-orange">SECONDARY</span></td><td>Exact Acc / OBO Acc</td><td>정확도 + 임상 허용 오차(&#x00b1;1점)</td></tr>
+    <tr><td><span class="tag tag-orange">SAFETY</span></td><td>Coverage / selective QWK·MAE</td><td>보류 후 남은 예측의 신뢰도와 보류 사유를 보고</td></tr>
+    <tr><td><span class="tag tag-orange">GROUNDING</span></td><td>timestamp–rubric concordance</td><td>자연어 유창성 대신 임상의 블라인드 근거 검수</td></tr>
+    <tr><td><span class="tag tag-orange">UNCERTAINTY</span></td><td>Subject-level bootstrap 95% CI</td><td>소표본·피험자 상관을 반영한 불확실성 보고</td></tr>
     <tr><td><span class="tag tag-gray">LEGACY</span></td><td>Pearson r</td><td>기존 CORAL baseline 비교용</td></tr>
   </tbody>
 </table>
@@ -214,32 +225,32 @@
 
 <!-- Section 6: 타임라인 -->
 <div class="section">
-<h2>6. 타임라인 (H1 2026)</h2>
+<h2>6. 다음 의사결정 게이트 (2026 H2)</h2>
 
 <div class="timeline">
   <div class="timeline-item">
-    <div class="timeline-date">2월 &#x2014; 진행 중</div>
-    <div class="timeline-desc">EDA, IRB 제출 (SNUH), VLM 파일럿 (연주, Due 2/28), Qwen3-VL 환경 세팅 (영빈, Due 2/28)</div>
+    <div class="timeline-date">Gate 1 — protocol lock</div>
+    <div class="timeline-desc">데이터 사용 승인·피험자 split·영상 품질 기준·출력 JSON schema·문헌 검색식을 고정한다.</div>
   </div>
   <div class="timeline-item">
-    <div class="timeline-date">3월</div>
-    <div class="timeline-desc">Teacher Rationale 생성 — Gemini 2.5 Pro / GPT-4.1으로 4 Tasks 전체 (연주 + 영권)<br>20초 비디오 클리핑, Kinematic Feature 추출 (대현)</div>
+    <div class="timeline-date">Gate 2 — pilot</div>
+    <div class="timeline-desc">고정된 소규모 validation에서 native-video, frame, pose+kinematic 경로와 quality-gated abstention을 비교한다.</div>
   </div>
   <div class="timeline-item">
-    <div class="timeline-date">3~4월</div>
-    <div class="timeline-desc">GT 검수 (영권 + 동성), Qwen3-VL-8B 학습 — Exp A, Exp B (영빈, HPC)</div>
+    <div class="timeline-date">Gate 3 — evidence review</div>
+    <div class="timeline-desc">임상의 블라인드 검수로 timestamp–rubric 적합성을 확인하고, 통과한 rationale만 student 학습 후보로 승격한다.</div>
   </div>
   <div class="timeline-item">
-    <div class="timeline-date">4~5월</div>
-    <div class="timeline-desc">전체 평가, Baseline 비교, 논문 작성</div>
+    <div class="timeline-date">Gate 4 — locked test</div>
+    <div class="timeline-desc">피험자 단위 고정 test에서 QWK/Spearman, CI, subgroup error, coverage를 보고한다.</div>
   </div>
   <div class="timeline-item">
-    <div class="timeline-date">5월</div>
-    <div class="timeline-desc">IRB 승인 후 SNUH 환자 데이터 수집 시작 (30명)</div>
+    <div class="timeline-date">Gate 5 — external validation</div>
+    <div class="timeline-desc">허용된 외부 데이터 또는 승인된 임상 코호트에서 카메라·해상도·태스크 변화에 대한 일반화를 검증한다.</div>
   </div>
   <div class="timeline-item">
-    <div class="timeline-date">6월</div>
-    <div class="timeline-desc"><strong>논문 투고</strong> &#x2014; npj Digital Medicine (IF 15.1) / MLHC 2026 (마감 4/17)</div>
+    <div class="timeline-date">Submission decision</div>
+    <div class="timeline-desc"><strong>사전등록한 성공·안전성 기준</strong>을 만족할 때만 목표 저널·학회 일정과 함께 투고 결정을 갱신한다.</div>
   </div>
 </div>
 </div>
@@ -264,7 +275,7 @@
 
 <!-- Section 8: 데이터 및 비용 -->
 <div class="section">
-<h2>8. 데이터 및 비용</h2>
+<h2>8. 데이터 및 실행 비용</h2>
 
 <table>
   <thead>
@@ -272,21 +283,18 @@
   </thead>
   <tbody>
     <tr><td><strong>PD4T</strong></td><td>35명 (30/task), 2,932개 비디오, 4 Tasks</td><td>학습 + 평가 (stratified split 사용)</td></tr>
-    <tr><td><strong>TULIP</strong></td><td>15명, 528개 비디오, 60fps</td><td>외부 검증 (H2 계획)</td></tr>
+    <tr><td><strong>TULIP</strong></td><td>승인된 데이터 카드 버전 기준으로 피험자·영상·capture metadata를 확정</td><td>외부 검증 (H2 계획)</td></tr>
     <tr><td><strong>SNUH</strong></td><td>30명 (IRB 승인 후)</td><td>임상 검증 (H2)</td></tr>
   </tbody>
 </table>
 
 <div class="box box-yellow">
-  <strong>API 비용 추정 (Teacher Rationale 생성):</strong><br>
-  Gemini 2.5 Pro: ~$3/task &#xd7; 4 tasks = <strong>~$12</strong> (260개 &#xd7; $0.012)<br>
-  GPT-4.1: ~$10/task &#xd7; 4 tasks = <strong>~$40</strong> (260개 &#xd7; $0.039)<br>
-  전체 API 비용 <strong>$50 미만</strong> 예상
+  <strong>비용 측정 원칙:</strong> 공급사 가격표를 논문·사이트에 고정하지 않는다. pilot에서 실제 model ID, 입력 token/frame, 출력 token, 파일 처리, 호출일을 함께 기록하고, 동일 manifest로 경로별 비용·지연시간을 산출한다.
 </div>
 </div>
 
 <div class="box box-blue" style="font-size:14px;margin-top:10px;">
-  <strong>한 줄 요약:</strong> Teacher VLM(Gemini 2.5 Pro / GPT-4.1)이 생성한 clinical rationale로 오픈소스 Qwen3-VL-8B를 학습시켜, <strong>세계 최초 VLM 기반 MDS-UPDRS 자동 채점 시스템</strong>을 구축한다.
+  <strong>한 줄 요약:</strong> 비디오·프레임·pose/kinematic 경로를 공정하게 비교하고, 임상의가 검수한 시간 근거와 품질 보류를 포함한 <strong>연구용 MDS-UPDRS 채점 보조 시스템</strong>을 평가한다.
 </div>
 
 </body>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <title>EDA: PD4T + TULIP Datasets</title>
     <style>
         :root {
@@ -98,7 +99,7 @@
         <span class="badge">TULIP: ~2,250 videos</span>
         <span class="badge">4 MDS-UPDRS Tasks</span>
         <span class="badge">UPDRS Score 0-4</span>
-        <span class="badge">2026-02-09</span>
+        <span class="badge">Reviewed 2026-07-27</span>
     </div>
 </div>
 
@@ -109,7 +110,7 @@
         <a href="#s3">3. 영상 길이</a>
         <a href="#s4">4. 비교표</a>
         <a href="#s5">5. 작년 결과</a>
-        <a href="#s6">6. 올해 계획</a>
+        <a href="#s6">6. 2026 H2 평가 프로토콜</a>
     </div>
 </div>
 
@@ -189,7 +190,7 @@
             <tr><td>Leg Agility</td><td>407 (48%)</td><td>376 (44%)</td><td>54 (6%)</td><td>11 (1%)</td><td>3 (0.4%)</td><td><strong>92%</strong></td></tr>
         </table>
         <div class="highlight-warn" style="margin-top:12px;">
-            <strong>핵심:</strong> Score 3-4는 시각적으로 명확 → VLM이 쉽게 맞춰야 함. <strong>Score 0 vs 1이 진짜 challenge</strong> (미세한 amplitude 감소, 약간 느림). Score 1 vs 2 = 치료 결정 기준 → 가장 실용적 가치가 높은 구간.
+            <strong>평가 가설:</strong> Score 0 vs 1은 미세한 amplitude·속도 차이 때문에 특히 어렵다. Score 1 vs 2도 임상적으로 중요한 경계다. Score 3–4가 더 뚜렷해 보이더라도, 모든 score 구간의 성능은 고정 test와 subject-level CI로 검증한다.
         </div>
     </div>
 </div>
@@ -210,7 +211,7 @@
             <tr><td>Leg Agility</td><td><strong>7.4초</strong></td><td>4.3초</td><td>22.9초</td><td><span class="tag tag-green">적합</span></td></tr>
         </table>
         <p style="font-size:0.85em; color:var(--text-light); margin-top:8px;">
-            * Gait 60초 기준 필터링: 24개 제외 (6%) → 402개 유지. 단, Gemini 2.5 Pro는 최대 1시간 지원하므로 <strong>필터링 없이 전부 사용도 가능</strong>.
+            * Gait의 최대 길이와 API 파일 제한은 별개다. 재현성을 위해 60초 상한·클리핑 규칙·프레임 샘플링을 모델과 무관하게 manifest에 고정하고, 원본 전체 길이와 제외 사유를 함께 보고한다.
         </p>
     </div>
 </div>
@@ -256,39 +257,38 @@
             <tr style="background:#fff5f5;"><td><strong>QWEN-2.5-VL</strong></td><td>VLM</td><td>FT (TULIP)</td><td><strong>11.0%</strong></td><td>0.056</td></tr>
         </table>
         <div class="highlight-warn" style="margin-top:12px;">
-            <strong>교훈:</strong> Gait(거시 운동) → VLM이 잘함. Finger Tapping(미세 운동, 480p) → VLM 실패. Zero-shot만 시도 → Few-shot/CoT 미검증 = 올해 핵심 실험 대상.
+            <strong>교훈:</strong> 이 결과는 고정된 과거 실험의 관찰치다. Gait와 미세 운동의 차이는 native video·frame·pose/kinematic 경로, 영상 품질, task별 score strata를 분리한 새 protocol에서 재검증한다.
         </div>
     </div>
 </div>
 
-<!-- Section 6: 올해 계획 -->
+<!-- Section 6: 2026 H2 protocol -->
 <div class="section" id="s6">
     <div class="section-header">
         <div class="section-num">6</div>
-        <h2>올해 VLM 논문: 작년 대비 What's New</h2>
+        <h2>2026 H2 평가 프로토콜: 과거 실험 대비 변경점</h2>
     </div>
 
     <div class="card">
         <table>
-            <tr><th>항목</th><th>작년 (2024)</th><th>올해 (2026)</th></tr>
-            <tr><td>VLM 모델</td><td>ChatGPT5.1, Qwen2.5, Gemma-3</td><td><strong>+ GPT-4o, Gemini 2.5 Pro, Qwen3-VL</strong></td></tr>
-            <tr><td>Adaptation</td><td>Zero-shot only</td><td><strong>+ Few-shot, CoT, LoRA fine-tuning</strong></td></tr>
-            <tr><td>Input Strategy</td><td>Raw frames only</td><td><strong>+ Skeleton overlay, Kinematic text, Clinical CoT</strong></td></tr>
+            <tr><th>항목</th><th>과거 탐색</th><th>2026 H2 고정 원칙</th></tr>
+            <tr><td>VLM 모델</td><td>개별 모델의 단회 비교</td><td><strong>실행별 model ID·API 버전·호출일을 기록; native video와 frame 경로 분리</strong></td></tr>
+            <tr><td>Adaptation</td><td>Zero-shot 중심</td><td><strong>임상의 검수 timestamp가 있는 rationale만 distillation/LoRA 후보로 사용</strong></td></tr>
+            <tr><td>Input Strategy</td><td>Raw frames only</td><td><strong>native video, uniform frames, pose/kinematic 보조 입력의 동일 split ablation</strong></td></tr>
             <tr><td>Tasks</td><td>Finger Tapping + Gait</td><td><strong>4개 task 전체</strong></td></tr>
-            <tr><td>Metrics</td><td>Accuracy, F1</td><td><strong>+ Spearman, QWK, MA-MAE (ordinal 특화)</strong></td></tr>
-            <tr><td>QA Dataset</td><td>없음</td><td><strong>~17,000 QA pairs (LoRA 학습용)</strong></td></tr>
+            <tr><td>Metrics</td><td>Accuracy, F1</td><td><strong>QWK, Spearman, MA-MAE + subject-level CI + coverage/abstention</strong></td></tr>
+            <tr><td>근거 검수</td><td>설명 생성 여부</td><td><strong>timestamp–rubric 적합성의 임상의 블라인드 검수</strong></td></tr>
         </table>
     </div>
 
     <div class="card">
-        <h3>2월 Action Items (담당자별)</h3>
+        <h3>다음 의사결정 게이트</h3>
         <table>
-            <tr><th>항목</th><th>담당</th><th>기한</th><th>상태</th></tr>
-            <tr><td>VLM 파일럿 (GPT-4o/Gemini)</td><td><strong>연주</strong></td><td>2/14</td><td><span class="tag tag-orange">TODO</span></td></tr>
-            <tr><td>VLM 파일럿 (Qwen3-VL)</td><td><strong>영빈</strong></td><td>2/21</td><td><span class="tag tag-orange">TODO</span></td></tr>
-            <tr><td>PD4T Skeleton 재검증</td><td><strong>대현</strong></td><td>2/21</td><td><span class="tag tag-orange">TODO</span></td></tr>
-            <tr><td>QA 문항 형식 확정 (L1,L3,L4,L6)</td><td><strong>영권+동성</strong></td><td>2/21</td><td><span class="tag tag-orange">TODO</span></td></tr>
-            <tr><td>PD4T EDA / TULIP 정보 조사</td><td>영권</td><td>-</td><td><span class="tag tag-green">완료</span></td></tr>
+            <tr><th>게이트</th><th>완료 기준</th><th>산출물</th><th>상태</th></tr>
+            <tr><td>Protocol lock</td><td>split·quality gate·JSON output schema·문헌 검색식 고정</td><td>versioned manifest</td><td><span class="tag tag-orange">next</span></td></tr>
+            <tr><td>Pilot</td><td>native video / frames / pose+kinematic 비교</td><td>validation report</td><td><span class="tag tag-orange">next</span></td></tr>
+            <tr><td>Evidence review</td><td>timestamp–rubric 임상의 검수</td><td>adjudication rubric</td><td><span class="tag tag-orange">next</span></td></tr>
+            <tr><td>Locked test</td><td>task·score·quality strata와 CI 공개</td><td>reproducible result table</td><td><span class="tag tag-orange">next</span></td></tr>
         </table>
     </div>
 </div>
@@ -297,7 +297,7 @@
 
 <div class="footer">
     <p><strong>EDA: PD4T + TULIP 데이터셋</strong> — Hawkeye / MotorExam 벤치마크</p>
-    <p>작성: 2026-02-09 | Stratified Split 기준 (데이터 누수 없음)</p>
+    <p>Reviewed: 2026-07-27 | 피험자 단위 Stratified Split 및 데이터 누수 방지 원칙</p>
 </div>
 
 </body>
